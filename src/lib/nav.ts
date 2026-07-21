@@ -5,13 +5,14 @@ const DASHBOARD: NavItem = { label: 'Dashboard', path: '/dashboard' }
 const FINANCIAL_SETTINGS: NavItem = { label: 'Financial Settings', path: '/settings/financial' }
 const ROOMS: NavItem = { label: 'Rooms', path: '/rooms' }
 const RESIDENTS: NavItem = { label: 'Residents', path: '/residents' }
+const FEES: NavItem = { label: 'Fees', path: '/fees' }
 
 export function getNavItemsForRole(role: Role): NavItem[] {
   switch (role) {
     case 'owner':
-      return [DASHBOARD, ROOMS, RESIDENTS, FINANCIAL_SETTINGS]
+      return [DASHBOARD, ROOMS, RESIDENTS, FEES, FINANCIAL_SETTINGS]
     case 'warden':
-      return [DASHBOARD, ROOMS, RESIDENTS]
+      return [DASHBOARD, ROOMS, RESIDENTS, FEES]
     case 'student':
       return [DASHBOARD]
     case 'guardian':
