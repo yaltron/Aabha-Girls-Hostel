@@ -1110,10 +1110,19 @@ public registration). Create the owner directly via the Supabase dashboard:
 Authentication → Users → Add User, with email/password of the user's
 choosing, and User Metadata:
 ```json
-{ "full_name": "Owner Name", "role": "owner" }
+{ "full_name": "Owner Name" }
 ```
-This fires the `handle_new_user` trigger from Task 3, creating the matching
-`profiles` row with `role = 'owner'`.
+Note: do **not** put `"role"` in this metadata - `handle_new_user` (fixed
+after Task 4's review found a signup-metadata role-escalation hole) always
+inserts new profiles as `role = 'student'` regardless of what's in the
+signup payload, since that payload is client-controlled and must never be
+trusted for authorization. This fires the trigger from Task 3, creating a
+matching `profiles` row with `role = 'student'` - then promote it to owner
+directly in the SQL Editor (this connects as a superuser and bypasses RLS
+entirely, so it works regardless of the `profiles` policies):
+```sql
+update public.profiles set role = 'owner' where id = '<the new user''s auth.users id, copied from the dashboard>';
+```
 
 - [ ] **Step 2: Sign in as owner and confirm the shell**
 
@@ -1123,8 +1132,10 @@ Expected: redirected to `/dashboard`, sidebar shows both "Dashboard" and
 
 - [ ] **Step 3: Create one test account per remaining role**
 
-Repeat Step 1 for `warden`, `student`, and `guardian`, each with
-`"role": "<role>"` in the metadata.
+Repeat Step 1 for `warden`, `student`, and `guardian`: Add User with only
+`full_name` in the metadata, then run the same SQL Editor `update` with the
+matching role for each (`'warden'`, `'student'` - already the default, no
+update needed for this one, `'guardian'`).
 
 - [ ] **Step 4: Verify RLS with the SQL Editor (the deferred check from Task 4)**
 
