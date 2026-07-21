@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 import { useAuth } from '../lib/auth'
 
 export function LoginPage() {
@@ -62,3 +63,7 @@ export function LoginPage() {
     </div>
   )
 }
+
+export const Route = createFileRoute('/login')({
+  component: LoginPage,
+})
