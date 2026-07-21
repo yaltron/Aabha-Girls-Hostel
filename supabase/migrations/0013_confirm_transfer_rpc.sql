@@ -26,7 +26,7 @@ begin
     raise exception 'Transfer request % is not awaiting confirmation', p_request_id;
   end if;
 
-  if v_student_id <> auth.uid() then
+  if auth.uid() is null or v_student_id is distinct from auth.uid() then
     raise exception 'Only the requesting student can confirm this transfer';
   end if;
 
@@ -52,3 +52,11 @@ begin
   where id = p_request_id;
 end;
 $$;
+
+-- Defense in depth: restrict EXECUTE to authenticated sessions only.
+-- Postgres grants EXECUTE on new functions to PUBLIC by default, which
+-- would otherwise let Supabase's unauthenticated `anon` role call this
+-- security-definer function too - redundant with the auth.uid() check
+-- above, but this closes the same hole at a second layer.
+revoke execute on function public.confirm_transfer(uuid) from public;
+grant execute on function public.confirm_transfer(uuid) to authenticated;
