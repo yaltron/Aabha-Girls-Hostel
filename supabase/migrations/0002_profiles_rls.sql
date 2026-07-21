@@ -37,3 +37,24 @@ create policy "student_own_row_update" on public.profiles
 create policy "guardian_own_row_select" on public.profiles
   for select
   using (id = auth.uid());
+
+-- RLS policies are row-scoped, not column-scoped: student_own_row_update lets a
+-- student write any column on their own row, so without this trigger they could
+-- `update profiles set role = 'owner' where id = auth.uid()` and self-escalate.
+create function public.prevent_role_self_escalation()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.role is distinct from old.role and public.current_role() <> 'owner' then
+    raise exception 'Only an owner can change a profile''s role';
+  end if;
+  return new;
+end;
+$$;
+
+create trigger prevent_role_self_escalation
+  before update on public.profiles
+  for each row execute function public.prevent_role_self_escalation();
