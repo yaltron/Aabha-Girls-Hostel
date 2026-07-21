@@ -16,13 +16,17 @@ returns void
 language plpgsql
 as $$
 begin
-  if (select status from public.beds where id = p_bed_id) <> 'vacant' then
+  if (select status from public.beds where id = p_bed_id for update) <> 'vacant' then
     raise exception 'Bed % is not vacant', p_bed_id;
   end if;
 
   insert into public.students (id, photo_url, guardian_name, guardian_phone, bed_id, check_in_date, monthly_fee)
   values (p_profile_id, p_photo_url, p_guardian_name, p_guardian_phone, p_bed_id, p_check_in_date, p_monthly_fee);
 
-  update public.beds set status = 'occupied' where id = p_bed_id;
+  update public.beds set status = 'occupied' where id = p_bed_id and status = 'vacant';
+
+  if not found then
+    raise exception 'Bed % is not vacant', p_bed_id;
+  end if;
 end;
 $$;
