@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../lib/auth'
 
 export function LoginPage() {
   const { signIn } = useAuth()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -11,7 +12,11 @@ export function LoginPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     const { error } = await signIn(email, password)
-    setError(error)
+    if (error) {
+      setError(error)
+    } else {
+      navigate({ to: '/dashboard' })
+    }
   }
 
   return (

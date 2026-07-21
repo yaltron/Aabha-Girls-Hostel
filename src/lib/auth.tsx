@@ -31,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setRole(null)
       setSession(newSession)
       if (newSession) loadRole(newSession.user.id)
       else setRole(null)
