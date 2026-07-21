@@ -12,9 +12,31 @@ export type Student = {
 }
 
 export async function fetchStudents(): Promise<Student[]> {
-  const { data, error } = await supabase.from('students').select('*')
+  const { data, error } = await supabase.from('students').select('*, profiles(full_name)')
   if (error) throw error
-  return (data ?? []) as Student[]
+  return (data ?? []).map((row: any) => ({
+    id: row.id,
+    full_name: row.profiles?.full_name ?? '',
+    photo_url: row.photo_url,
+    guardian_name: row.guardian_name,
+    guardian_phone: row.guardian_phone,
+    bed_id: row.bed_id,
+    check_in_date: row.check_in_date,
+    monthly_fee: row.monthly_fee,
+  })) as Student[]
+}
+
+export type UnassignedProfile = { id: string; full_name: string }
+
+export async function fetchUnassignedStudentProfiles(): Promise<UnassignedProfile[]> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, full_name, students(id)')
+    .eq('role', 'student')
+  if (error) throw error
+  return (data ?? [])
+    .filter((row: any) => !row.students || row.students.length === 0)
+    .map((row: any) => ({ id: row.id, full_name: row.full_name }))
 }
 
 export async function checkInStudent(input: {
