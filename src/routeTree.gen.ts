@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated.residents'
 import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.rooms'
+import { Route as AuthenticatedReceiptInvoiceIdRouteImport } from './routes/_authenticated.receipt.$invoiceId'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
@@ -39,6 +40,12 @@ const AuthenticatedRoomsRoute = AuthenticatedRoomsRouteImport.update({
   path: '/rooms',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedReceiptInvoiceIdRoute =
+  AuthenticatedReceiptInvoiceIdRouteImport.update({
+    id: '/receipt/$invoiceId',
+    path: '/receipt/$invoiceId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedRouteWithChildren
@@ -46,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/rooms': typeof AuthenticatedRoomsRoute
+  '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedRouteWithChildren
@@ -53,6 +61,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/rooms': typeof AuthenticatedRoomsRoute
+  '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,12 +70,25 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/residents': typeof AuthenticatedResidentsRoute
   '/_authenticated/rooms': typeof AuthenticatedRoomsRoute
+  '/_authenticated/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/residents' | '/rooms'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/residents'
+    | '/rooms'
+    | '/receipt/$invoiceId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/residents' | '/rooms'
+  to:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/residents'
+    | '/rooms'
+    | '/receipt/$invoiceId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -74,6 +96,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/residents'
     | '/_authenticated/rooms'
+    | '/_authenticated/receipt/$invoiceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,6 +141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRoomsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/receipt/$invoiceId': {
+      id: '/_authenticated/receipt/$invoiceId'
+      path: '/receipt/$invoiceId'
+      fullPath: '/receipt/$invoiceId'
+      preLoaderRoute: typeof AuthenticatedReceiptInvoiceIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -125,12 +155,14 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
   AuthenticatedRoomsRoute: typeof AuthenticatedRoomsRoute
+  AuthenticatedReceiptInvoiceIdRoute: typeof AuthenticatedReceiptInvoiceIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
   AuthenticatedRoomsRoute: AuthenticatedRoomsRoute,
+  AuthenticatedReceiptInvoiceIdRoute: AuthenticatedReceiptInvoiceIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

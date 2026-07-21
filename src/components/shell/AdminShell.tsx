@@ -11,7 +11,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div>
       <Sidebar role={role} />
       <TopBar />
-      <main className="ml-64 pt-24 px-gutter pb-section-gap">{children}</main>
+      <main className="ml-64 pt-24 px-gutter pb-section-gap print:ml-0 print:pt-0">{children}</main>
     </div>
   )
 }

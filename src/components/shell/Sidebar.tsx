@@ -4,7 +4,7 @@ export function Sidebar({ role }: { role: Role }) {
   const items = getNavItemsForRole(role)
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container py-base px-4 flex flex-col">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-surface-container py-base px-4 flex flex-col print:hidden">
       <div className="px-2 mb-10">
         <h1 className="font-display text-xl text-primary">Aabha</h1>
         <p className="text-xs text-secondary">Hostel Management</p>
