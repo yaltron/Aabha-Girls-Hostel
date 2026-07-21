@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { fetchDuesInvoices, generateMonthlyInvoices, type Invoice } from '../lib/fees'
 import { DuesTable } from '../components/fees/DuesTable'
@@ -12,6 +12,7 @@ function currentBillingMonth(): string {
 function FeesPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
+  const [lastPaidInvoiceId, setLastPaidInvoiceId] = useState<string | null>(null)
 
   function refetch() {
     fetchDuesInvoices().then(setInvoices)
@@ -27,6 +28,7 @@ function FeesPage() {
   }
 
   function handleRecorded() {
+    setLastPaidInvoiceId(selectedInvoice?.id ?? null)
     setSelectedInvoice(null)
     refetch()
   }
@@ -42,6 +44,24 @@ function FeesPage() {
           Generate This Month's Invoices
         </button>
       </div>
+
+      {lastPaidInvoiceId && (
+        <div className="bg-surface-container-lowest rounded-xxl shadow-premium p-6 flex justify-between items-center">
+          <p className="text-on-surface">Payment recorded.</p>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/receipt/$invoiceId"
+              params={{ invoiceId: lastPaidInvoiceId }}
+              className="text-primary font-medium hover:underline"
+            >
+              View Receipt
+            </Link>
+            <button onClick={() => setLastPaidInvoiceId(null)} className="text-on-surface-variant text-sm hover:underline">
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       <DuesTable invoices={invoices} onSelectInvoice={setSelectedInvoice} />
 
