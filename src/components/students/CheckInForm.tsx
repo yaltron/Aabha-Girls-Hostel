@@ -16,18 +16,24 @@ export function CheckInForm({
   const [checkInDate, setCheckInDate] = useState('')
   const [monthlyFee, setMonthlyFee] = useState('')
   const [bedId, setBedId] = useState(vacantBeds[0]?.id ?? '')
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    await checkInStudent({
-      profileId,
-      guardianName,
-      guardianPhone,
-      bedId,
-      checkInDate,
-      monthlyFee: Number(monthlyFee),
-    })
-    onCheckedIn()
+    setError(null)
+    try {
+      await checkInStudent({
+        profileId,
+        guardianName,
+        guardianPhone,
+        bedId,
+        checkInDate,
+        monthlyFee: Number(monthlyFee),
+      })
+      onCheckedIn()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Check-in failed')
+    }
   }
 
   return (
@@ -56,6 +62,7 @@ export function CheckInForm({
           ))}
         </select>
       </div>
+      {error && <p className="text-error text-sm">{error}</p>}
       <button type="submit" className="w-full bg-primary text-on-primary py-4 rounded-full font-medium active:scale-95 transition-transform">
         Check In
       </button>

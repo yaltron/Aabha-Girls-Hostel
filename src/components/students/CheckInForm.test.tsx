@@ -26,4 +26,19 @@ describe('CheckInForm', () => {
     await waitFor(() => expect(checkInStudent).toHaveBeenCalled())
     expect(onCheckedIn).toHaveBeenCalled()
   })
+
+  it('shows the error message and does not call onCheckedIn when checkInStudent rejects', async () => {
+    checkInStudent.mockRejectedValueOnce(new Error('Bed bed-1 is not vacant'))
+    const onCheckedIn = vi.fn()
+    render(<CheckInForm vacantBeds={vacantBeds} onCheckedIn={onCheckedIn} profileId="profile-1" />)
+
+    fireEvent.change(screen.getByLabelText(/guardian name/i), { target: { value: 'G. Adhikari' } })
+    fireEvent.change(screen.getByLabelText(/guardian phone/i), { target: { value: '9800000001' } })
+    fireEvent.change(screen.getByLabelText(/check-in date/i), { target: { value: '2026-07-01' } })
+    fireEvent.change(screen.getByLabelText(/monthly fee/i), { target: { value: '14000' } })
+    fireEvent.click(screen.getByRole('button', { name: /check in/i }))
+
+    await waitFor(() => expect(screen.getByText('Bed bed-1 is not vacant')).toBeInTheDocument())
+    expect(onCheckedIn).not.toHaveBeenCalled()
+  })
 })
