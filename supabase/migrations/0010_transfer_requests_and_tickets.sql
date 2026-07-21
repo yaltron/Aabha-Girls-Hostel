@@ -18,6 +18,15 @@ create table public.transfer_requests (
   created_at timestamptz not null default now()
 );
 
+-- A student can only have one active (not yet decided, or decided but not
+-- yet confirmed/rejected) transfer request at a time. This is what makes
+-- from_bed_id trustworthy at approval time - without it, a second request
+-- could change the student's real bed before an earlier request is
+-- approved, leaving the earlier request's from_bed_id stale.
+create unique index transfer_requests_one_active_per_student
+  on public.transfer_requests (student_id)
+  where status in ('pending', 'awaiting_confirmation');
+
 create table public.maintenance_tickets (
   id uuid primary key default gen_random_uuid(),
   student_id uuid not null references public.students(id) default auth.uid(),

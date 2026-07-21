@@ -15,7 +15,11 @@ declare
   v_student_id uuid;
 begin
   select from_bed_id, student_id into v_from_bed_id, v_student_id
-  from public.transfer_requests where id = p_request_id;
+  from public.transfer_requests where id = p_request_id and status = 'pending';
+
+  if not found then
+    raise exception 'Transfer request % is not pending', p_request_id;
+  end if;
 
   select r.monthly_price into v_old_room_price
   from public.beds b join public.rooms r on r.id = b.room_id
@@ -56,6 +60,10 @@ as $$
 begin
   update public.transfer_requests
   set status = 'rejected', reject_reason = p_reason, reviewed_by = auth.uid(), reviewed_at = now()
-  where id = p_request_id;
+  where id = p_request_id and status = 'pending';
+
+  if not found then
+    raise exception 'Transfer request % is not pending', p_request_id;
+  end if;
 end;
 $$;
