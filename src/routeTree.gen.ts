@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BookingRouteImport } from './routes/booking'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RoomsRouteImport } from './routes/rooms'
 import { Route as TransparencyRouteImport } from './routes/transparency'
@@ -36,9 +36,9 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
+const BookingRoute = BookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -117,7 +117,7 @@ const AuthenticatedReceiptInvoiceIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/contact': typeof ContactRoute
+  '/booking': typeof BookingRoute
   '/login': typeof LoginRoute
   '/rooms': typeof RoomsRoute
   '/transparency': typeof TransparencyRoute
@@ -135,7 +135,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/contact': typeof ContactRoute
+  '/booking': typeof BookingRoute
   '/login': typeof LoginRoute
   '/rooms': typeof RoomsRoute
   '/transparency': typeof TransparencyRoute
@@ -155,7 +155,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/contact': typeof ContactRoute
+  '/booking': typeof BookingRoute
   '/login': typeof LoginRoute
   '/rooms': typeof RoomsRoute
   '/transparency': typeof TransparencyRoute
@@ -175,7 +175,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/contact'
+    | '/booking'
     | '/login'
     | '/rooms'
     | '/transparency'
@@ -193,7 +193,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/contact'
+    | '/booking'
     | '/login'
     | '/rooms'
     | '/transparency'
@@ -212,7 +212,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/contact'
+    | '/booking'
     | '/login'
     | '/rooms'
     | '/transparency'
@@ -232,7 +232,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  ContactRoute: typeof ContactRoute
+  BookingRoute: typeof BookingRoute
   LoginRoute: typeof LoginRoute
   RoomsRoute: typeof RoomsRoute
   TransparencyRoute: typeof TransparencyRoute
@@ -254,11 +254,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
+    '/booking': {
+      id: '/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof BookingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -397,7 +397,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  ContactRoute: ContactRoute,
+  BookingRoute: BookingRoute,
   LoginRoute: LoginRoute,
   RoomsRoute: RoomsRoute,
   TransparencyRoute: TransparencyRoute,
