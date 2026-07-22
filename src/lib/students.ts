@@ -9,6 +9,7 @@ export type Student = {
   bed_id: string | null
   check_in_date: string | null
   monthly_fee: number | null
+  guardian_id: string | null
 }
 
 export async function fetchStudents(): Promise<Student[]> {
@@ -23,6 +24,7 @@ export async function fetchStudents(): Promise<Student[]> {
     bed_id: row.bed_id,
     check_in_date: row.check_in_date,
     monthly_fee: row.monthly_fee,
+    guardian_id: row.guardian_id,
   })) as Student[]
 }
 
@@ -57,5 +59,26 @@ export async function checkInStudent(input: {
     p_monthly_fee: input.monthlyFee,
     p_photo_url: input.photoUrl ?? null,
   })
+  if (error) throw error
+}
+
+export type UnlinkedGuardianProfile = { id: string; full_name: string }
+
+export async function fetchUnlinkedGuardianProfiles(): Promise<UnlinkedGuardianProfile[]> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, full_name, students!students_guardian_id_fkey(id)')
+    .eq('role', 'guardian')
+  if (error) throw error
+  return (data ?? [])
+    .filter((row: any) => !row.students || row.students.length === 0)
+    .map((row: any) => ({ id: row.id, full_name: row.full_name }))
+}
+
+export async function linkGuardian(studentId: string, guardianProfileId: string): Promise<void> {
+  const { error } = await supabase
+    .from('students')
+    .update({ guardian_id: guardianProfileId })
+    .eq('id', studentId)
   if (error) throw error
 }

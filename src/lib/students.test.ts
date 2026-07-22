@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 
-// Raw shape as Supabase actually returns it for `select('*, profiles(full_name)')`:
-// the joined table comes back as a nested object under the table name.
+// Raw shape as Supabase actually returns it for
+// `select('*, profiles!students_id_fkey(full_name)')`: the joined table
+// still comes back nested under the table name regardless of the FK hint.
 const mockStudentsRawData = [
   {
     id: 'student-1',
@@ -11,6 +12,7 @@ const mockStudentsRawData = [
     bed_id: 'bed-1',
     check_in_date: '2026-07-01',
     monthly_fee: 14000,
+    guardian_id: null,
     profiles: { full_name: 'Test Student' },
   },
 ]
@@ -20,12 +22,24 @@ const mockUnassignedProfilesData = [
   { id: 'profile-2', full_name: 'Already Checked In', students: [{ id: 'student-2' }] },
 ]
 
+const mockUnlinkedGuardiansData = [
+  { id: 'guardian-1', full_name: 'Not Yet Linked', students: [] },
+  { id: 'guardian-2', full_name: 'Already Linked', students: [{ id: 'student-3' }] },
+]
+
 const rpcMock = vi.fn(() => Promise.resolve({ error: null }))
+const updateEqMock = vi.fn(() => Promise.resolve({ error: null }))
+const updateMock = vi.fn(() => ({ eq: updateEqMock }))
 
 vi.mock('./supabase', () => ({
   supabase: {
     from: vi.fn((table: string) => ({
-      select: vi.fn(() => {
+      select: vi.fn((cols: string) => {
+        if (table === 'profiles' && cols.includes('students!students_guardian_id_fkey')) {
+          return {
+            eq: vi.fn(() => Promise.resolve({ data: mockUnlinkedGuardiansData, error: null })),
+          }
+        }
         if (table === 'profiles') {
           return {
             eq: vi.fn(() => Promise.resolve({ data: mockUnassignedProfilesData, error: null })),
@@ -33,6 +47,7 @@ vi.mock('./supabase', () => ({
         }
         return Promise.resolve({ data: mockStudentsRawData, error: null })
       }),
+      update: updateMock,
     })),
     rpc: rpcMock,
   },
@@ -52,8 +67,26 @@ describe('fetchStudents', () => {
         bed_id: 'bed-1',
         check_in_date: '2026-07-01',
         monthly_fee: 14000,
+        guardian_id: null,
       },
     ])
+  })
+})
+
+describe('fetchUnlinkedGuardianProfiles', () => {
+  it('returns only guardian profiles not yet linked to any student', async () => {
+    const { fetchUnlinkedGuardianProfiles } = await import('./students')
+    const guardians = await fetchUnlinkedGuardianProfiles()
+    expect(guardians).toEqual([{ id: 'guardian-1', full_name: 'Not Yet Linked' }])
+  })
+})
+
+describe('linkGuardian', () => {
+  it('updates the student row with the chosen guardian profile id', async () => {
+    const { linkGuardian } = await import('./students')
+    await linkGuardian('student-1', 'guardian-1')
+    expect(updateMock).toHaveBeenCalledWith({ guardian_id: 'guardian-1' })
+    expect(updateEqMock).toHaveBeenCalledWith('id', 'student-1')
   })
 })
 
