@@ -1,14 +1,24 @@
+import { useState } from 'react'
 import { updateInquiryStatus, type Inquiry, type InquiryStatus } from '../../lib/inquiries'
 
 export function InquiriesInbox({ inquiries, onChanged }: { inquiries: Inquiry[]; onChanged: () => void }) {
+  const [error, setError] = useState<string | null>(null)
+
   async function handleStatusChange(id: string, status: InquiryStatus) {
-    await updateInquiryStatus(id, status)
-    onChanged()
+    setError(null)
+    try {
+      await updateInquiryStatus(id, status)
+      onChanged()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not update status')
+    }
   }
 
   return (
-    <div className="bg-surface-container-lowest rounded-xxl shadow-premium overflow-hidden">
-      <table className="w-full text-left">
+    <div className="space-y-4">
+      {error && <p className="text-error text-sm">{error}</p>}
+      <div className="bg-surface-container-lowest rounded-xxl shadow-premium overflow-hidden">
+        <table className="w-full text-left">
         <thead className="bg-surface-container/30 text-on-surface-variant uppercase text-xs">
           <tr>
             <th className="px-8 py-4">Name</th>
@@ -39,6 +49,7 @@ export function InquiriesInbox({ inquiries, onChanged }: { inquiries: Inquiry[];
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

@@ -25,4 +25,15 @@ describe('InquiriesInbox', () => {
     await waitFor(() => expect(updateInquiryStatus).toHaveBeenCalledWith('inq-1', 'contacted'))
     expect(onChanged).toHaveBeenCalled()
   })
+
+  it('shows an error and does not call onChanged when updateInquiryStatus rejects', async () => {
+    updateInquiryStatus.mockRejectedValueOnce(new Error('Update failed'))
+    const onChanged = vi.fn()
+    render(<InquiriesInbox inquiries={inquiries} onChanged={onChanged} />)
+
+    fireEvent.change(screen.getByLabelText(/status for anita/i), { target: { value: 'contacted' } })
+
+    await waitFor(() => expect(screen.getByText('Update failed')).toBeInTheDocument())
+    expect(onChanged).not.toHaveBeenCalled()
+  })
 })
