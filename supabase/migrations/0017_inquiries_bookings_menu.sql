@@ -50,7 +50,7 @@ create policy "inquiries_owner_warden_full_access" on public.inquiries
 create policy "inquiries_anon_insert" on public.inquiries
   for insert
   to anon
-  with check (true);
+  with check (status = 'new');
 
 create policy "bookings_owner_warden_full_access" on public.bookings
   for all
@@ -60,7 +60,7 @@ create policy "bookings_owner_warden_full_access" on public.bookings
 create policy "bookings_anon_insert" on public.bookings
   for insert
   to anon
-  with check (true);
+  with check (status = 'pending' and reserved_bed_id is null);
 
 create policy "menu_items_owner_warden_full_access" on public.menu_items
   for all
