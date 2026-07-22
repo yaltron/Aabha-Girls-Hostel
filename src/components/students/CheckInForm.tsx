@@ -6,10 +6,12 @@ export function CheckInForm({
   vacantBeds,
   onCheckedIn,
   profileId,
+  reservedNames,
 }: {
   vacantBeds: Bed[]
   onCheckedIn: () => void
   profileId: string
+  reservedNames?: Record<string, string>
 }) {
   const [guardianName, setGuardianName] = useState('')
   const [guardianPhone, setGuardianPhone] = useState('')
@@ -58,7 +60,9 @@ export function CheckInForm({
         <label htmlFor="bed" className="block text-sm font-medium text-on-surface-variant">Bed</label>
         <select id="bed" value={bedId} onChange={(e) => setBedId(e.target.value)} className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3">
           {vacantBeds.map((bed) => (
-            <option key={bed.id} value={bed.id}>{bed.bed_label}</option>
+            <option key={bed.id} value={bed.id}>
+              {bed.bed_label}{reservedNames?.[bed.id] ? ` (Reserved: ${reservedNames[bed.id]})` : ''}
+            </option>
           ))}
         </select>
       </div>

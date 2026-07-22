@@ -20,6 +20,12 @@ export async function fetchPendingBookings(): Promise<Booking[]> {
   return (data ?? []) as Booking[]
 }
 
+export async function fetchApprovedBookings(): Promise<Booking[]> {
+  const { data, error } = await supabase.from('bookings').select('*').eq('status', 'approved')
+  if (error) throw error
+  return (data ?? []) as Booking[]
+}
+
 export async function approveBooking(bookingId: string, bedId: string): Promise<void> {
   const { error } = await supabase.rpc('approve_booking', { p_booking_id: bookingId, p_bed_id: bedId })
   if (error) throw error

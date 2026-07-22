@@ -10,6 +10,7 @@ import {
 } from '../lib/students'
 import { fetchGuardianUpdateForStudent } from '../lib/guardian'
 import { fetchRoomsWithBeds, type Room } from '../lib/rooms'
+import { fetchApprovedBookings, type Booking } from '../lib/bookings'
 import { ResidentList } from '../components/students/ResidentList'
 import { CheckInForm } from '../components/students/CheckInForm'
 import { LinkGuardianForm } from '../components/students/LinkGuardianForm'
@@ -18,6 +19,7 @@ import { PostUpdateForm } from '../components/students/PostUpdateForm'
 function ResidentsPage() {
   const [students, setStudents] = useState<Student[]>([])
   const [rooms, setRooms] = useState<Room[]>([])
+  const [approvedBookings, setApprovedBookings] = useState<Booking[]>([])
   const [unassignedProfiles, setUnassignedProfiles] = useState<UnassignedProfile[]>([])
   const [selectedProfileId, setSelectedProfileId] = useState('')
   const [linkingStudent, setLinkingStudent] = useState<Student | null>(null)
@@ -28,6 +30,7 @@ function ResidentsPage() {
   function refetchAll() {
     fetchStudents().then(setStudents)
     fetchRoomsWithBeds().then(setRooms)
+    fetchApprovedBookings().then(setApprovedBookings)
     fetchUnassignedStudentProfiles().then((profiles) => {
       setUnassignedProfiles(profiles)
       setSelectedProfileId((current) => (profiles.some((p) => p.id === current) ? current : ''))
@@ -68,7 +71,10 @@ function ResidentsPage() {
     setPostingUpdateStudent(null)
   }
 
-  const vacantBeds = rooms.flatMap((r) => r.beds).filter((b) => b.status === 'vacant')
+  const vacantBeds = rooms.flatMap((r) => r.beds).filter((b) => b.status === 'vacant' || b.status === 'reserved')
+  const reservedNames = Object.fromEntries(
+    approvedBookings.filter((b) => b.reserved_bed_id).map((b) => [b.reserved_bed_id as string, b.name])
+  )
 
   return (
     <div className="space-y-8">
@@ -101,7 +107,7 @@ function ResidentsPage() {
           </div>
         )}
         {selectedProfileId && vacantBeds.length > 0 && (
-          <CheckInForm vacantBeds={vacantBeds} profileId={selectedProfileId} onCheckedIn={handleCheckedIn} />
+          <CheckInForm vacantBeds={vacantBeds} profileId={selectedProfileId} onCheckedIn={handleCheckedIn} reservedNames={reservedNames} />
         )}
       </div>
 

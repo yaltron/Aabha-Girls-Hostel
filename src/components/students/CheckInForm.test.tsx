@@ -41,4 +41,21 @@ describe('CheckInForm', () => {
     await waitFor(() => expect(screen.getByText('Bed bed-1 is not vacant')).toBeInTheDocument())
     expect(onCheckedIn).not.toHaveBeenCalled()
   })
+
+  it('labels a reserved bed option with the reserving visitor name', () => {
+    const reservedBeds: Bed[] = [
+      { id: 'bed-1', room_id: 'room-1', bed_label: 'A', status: 'vacant' },
+      { id: 'bed-2', room_id: 'room-1', bed_label: 'B', status: 'reserved' },
+    ]
+    render(
+      <CheckInForm
+        vacantBeds={reservedBeds}
+        onCheckedIn={vi.fn()}
+        profileId="profile-1"
+        reservedNames={{ 'bed-2': 'Sita Adhikari' }}
+      />
+    )
+
+    expect(screen.getByText(/Reserved: Sita Adhikari/i)).toBeInTheDocument()
+  })
 })
