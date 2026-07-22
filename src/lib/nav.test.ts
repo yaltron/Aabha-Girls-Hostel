@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { getNavItemsForRole } from './nav'
 
 describe('getNavItemsForRole', () => {
-  it('gives owner the full nav including financial config, rooms, residents, fees, and requests', () => {
+  it('gives owner the full nav including financial config, rooms, residents, fees, requests, and site content', () => {
     const items = getNavItemsForRole('owner').map((i) => i.label)
     expect(items).toContain('Dashboard')
     expect(items).toContain('Financial Settings')
@@ -10,9 +10,10 @@ describe('getNavItemsForRole', () => {
     expect(items).toContain('Residents')
     expect(items).toContain('Fees')
     expect(items).toContain('Requests')
+    expect(items).toContain('Site Content')
   })
 
-  it('gives warden operational nav (rooms, residents, fees, requests) but not financial config', () => {
+  it('gives warden operational nav (rooms, residents, fees, requests) but not financial config or site content', () => {
     const items = getNavItemsForRole('warden').map((i) => i.label)
     expect(items).toContain('Dashboard')
     expect(items).toContain('Rooms')
@@ -20,6 +21,7 @@ describe('getNavItemsForRole', () => {
     expect(items).toContain('Fees')
     expect(items).toContain('Requests')
     expect(items).not.toContain('Financial Settings')
+    expect(items).not.toContain('Site Content')
   })
 
   it('gives student their dashboard plus My Room, Maintenance, and Notices', () => {

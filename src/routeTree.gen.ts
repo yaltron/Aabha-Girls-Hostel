@@ -20,6 +20,7 @@ import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated.requests'
 import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated.residents'
 import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.rooms'
+import { Route as AuthenticatedSiteContentRouteImport } from './routes/_authenticated.site-content'
 import { Route as AuthenticatedReceiptInvoiceIdRouteImport } from './routes/_authenticated.receipt.$invoiceId'
 
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -77,6 +78,12 @@ const AuthenticatedRoomsRoute = AuthenticatedRoomsRouteImport.update({
   path: '/rooms',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSiteContentRoute =
+  AuthenticatedSiteContentRouteImport.update({
+    id: '/site-content',
+    path: '/site-content',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedReceiptInvoiceIdRoute =
   AuthenticatedReceiptInvoiceIdRouteImport.update({
     id: '/receipt/$invoiceId',
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/requests': typeof AuthenticatedRequestsRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/rooms': typeof AuthenticatedRoomsRoute
+  '/site-content': typeof AuthenticatedSiteContentRoute
   '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRoutesByTo {
@@ -110,6 +118,7 @@ export interface FileRoutesByTo {
   '/requests': typeof AuthenticatedRequestsRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/rooms': typeof AuthenticatedRoomsRoute
+  '/site-content': typeof AuthenticatedSiteContentRoute
   '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRoutesById {
@@ -125,6 +134,7 @@ export interface FileRoutesById {
   '/_authenticated/requests': typeof AuthenticatedRequestsRoute
   '/_authenticated/residents': typeof AuthenticatedResidentsRoute
   '/_authenticated/rooms': typeof AuthenticatedRoomsRoute
+  '/_authenticated/site-content': typeof AuthenticatedSiteContentRoute
   '/_authenticated/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRouteTypes {
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/requests'
     | '/residents'
     | '/rooms'
+    | '/site-content'
     | '/receipt/$invoiceId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/requests'
     | '/residents'
     | '/rooms'
+    | '/site-content'
     | '/receipt/$invoiceId'
   id:
     | '__root__'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/_authenticated/requests'
     | '/_authenticated/residents'
     | '/_authenticated/rooms'
+    | '/_authenticated/site-content'
     | '/_authenticated/receipt/$invoiceId'
   fileRoutesById: FileRoutesById
 }
@@ -256,6 +269,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRoomsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/site-content': {
+      id: '/_authenticated/site-content'
+      path: '/site-content'
+      fullPath: '/site-content'
+      preLoaderRoute: typeof AuthenticatedSiteContentRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/receipt/$invoiceId': {
       id: '/_authenticated/receipt/$invoiceId'
       path: '/receipt/$invoiceId'
@@ -276,6 +296,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
   AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
   AuthenticatedRoomsRoute: typeof AuthenticatedRoomsRoute
+  AuthenticatedSiteContentRoute: typeof AuthenticatedSiteContentRoute
   AuthenticatedReceiptInvoiceIdRoute: typeof AuthenticatedReceiptInvoiceIdRoute
 }
 
@@ -289,6 +310,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,
   AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
   AuthenticatedRoomsRoute: AuthenticatedRoomsRoute,
+  AuthenticatedSiteContentRoute: AuthenticatedSiteContentRoute,
   AuthenticatedReceiptInvoiceIdRoute: AuthenticatedReceiptInvoiceIdRoute,
 }
 
