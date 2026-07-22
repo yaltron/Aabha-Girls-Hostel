@@ -13,6 +13,10 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedFeesRouteImport } from './routes/_authenticated.fees'
+import { Route as AuthenticatedMaintenanceRouteImport } from './routes/_authenticated.maintenance'
+import { Route as AuthenticatedMyRoomRouteImport } from './routes/_authenticated.my-room'
+import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated.notices'
+import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated.requests'
 import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated.residents'
 import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.rooms'
 import { Route as AuthenticatedReceiptInvoiceIdRouteImport } from './routes/_authenticated.receipt.$invoiceId'
@@ -34,6 +38,27 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedFeesRoute = AuthenticatedFeesRouteImport.update({
   id: '/fees',
   path: '/fees',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMaintenanceRoute =
+  AuthenticatedMaintenanceRouteImport.update({
+    id: '/maintenance',
+    path: '/maintenance',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedMyRoomRoute = AuthenticatedMyRoomRouteImport.update({
+  id: '/my-room',
+  path: '/my-room',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedNoticesRoute = AuthenticatedNoticesRouteImport.update({
+  id: '/notices',
+  path: '/notices',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRequestsRoute = AuthenticatedRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedResidentsRoute = AuthenticatedResidentsRouteImport.update({
@@ -58,6 +83,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
+  '/maintenance': typeof AuthenticatedMaintenanceRoute
+  '/my-room': typeof AuthenticatedMyRoomRoute
+  '/notices': typeof AuthenticatedNoticesRoute
+  '/requests': typeof AuthenticatedRequestsRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/rooms': typeof AuthenticatedRoomsRoute
   '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
@@ -67,6 +96,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
+  '/maintenance': typeof AuthenticatedMaintenanceRoute
+  '/my-room': typeof AuthenticatedMyRoomRoute
+  '/notices': typeof AuthenticatedNoticesRoute
+  '/requests': typeof AuthenticatedRequestsRoute
   '/residents': typeof AuthenticatedResidentsRoute
   '/rooms': typeof AuthenticatedRoomsRoute
   '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
@@ -77,6 +110,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fees': typeof AuthenticatedFeesRoute
+  '/_authenticated/maintenance': typeof AuthenticatedMaintenanceRoute
+  '/_authenticated/my-room': typeof AuthenticatedMyRoomRoute
+  '/_authenticated/notices': typeof AuthenticatedNoticesRoute
+  '/_authenticated/requests': typeof AuthenticatedRequestsRoute
   '/_authenticated/residents': typeof AuthenticatedResidentsRoute
   '/_authenticated/rooms': typeof AuthenticatedRoomsRoute
   '/_authenticated/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
@@ -88,6 +125,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/fees'
+    | '/maintenance'
+    | '/my-room'
+    | '/notices'
+    | '/requests'
     | '/residents'
     | '/rooms'
     | '/receipt/$invoiceId'
@@ -97,6 +138,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/fees'
+    | '/maintenance'
+    | '/my-room'
+    | '/notices'
+    | '/requests'
     | '/residents'
     | '/rooms'
     | '/receipt/$invoiceId'
@@ -106,6 +151,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/dashboard'
     | '/_authenticated/fees'
+    | '/_authenticated/maintenance'
+    | '/_authenticated/my-room'
+    | '/_authenticated/notices'
+    | '/_authenticated/requests'
     | '/_authenticated/residents'
     | '/_authenticated/rooms'
     | '/_authenticated/receipt/$invoiceId'
@@ -146,6 +195,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/maintenance': {
+      id: '/_authenticated/maintenance'
+      path: '/maintenance'
+      fullPath: '/maintenance'
+      preLoaderRoute: typeof AuthenticatedMaintenanceRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/my-room': {
+      id: '/_authenticated/my-room'
+      path: '/my-room'
+      fullPath: '/my-room'
+      preLoaderRoute: typeof AuthenticatedMyRoomRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/notices': {
+      id: '/_authenticated/notices'
+      path: '/notices'
+      fullPath: '/notices'
+      preLoaderRoute: typeof AuthenticatedNoticesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/requests': {
+      id: '/_authenticated/requests'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof AuthenticatedRequestsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/residents': {
       id: '/_authenticated/residents'
       path: '/residents'
@@ -173,6 +250,10 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFeesRoute: typeof AuthenticatedFeesRoute
+  AuthenticatedMaintenanceRoute: typeof AuthenticatedMaintenanceRoute
+  AuthenticatedMyRoomRoute: typeof AuthenticatedMyRoomRoute
+  AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
+  AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
   AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
   AuthenticatedRoomsRoute: typeof AuthenticatedRoomsRoute
   AuthenticatedReceiptInvoiceIdRoute: typeof AuthenticatedReceiptInvoiceIdRoute
@@ -181,6 +262,10 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFeesRoute: AuthenticatedFeesRoute,
+  AuthenticatedMaintenanceRoute: AuthenticatedMaintenanceRoute,
+  AuthenticatedMyRoomRoute: AuthenticatedMyRoomRoute,
+  AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
+  AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,
   AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
   AuthenticatedRoomsRoute: AuthenticatedRoomsRoute,
   AuthenticatedReceiptInvoiceIdRoute: AuthenticatedReceiptInvoiceIdRoute,
