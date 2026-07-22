@@ -2,7 +2,6 @@ import { useState, type FormEvent } from 'react'
 import { updateSiteContent } from '../../lib/siteContent'
 
 type HeroContent = { headline: string; subhead: string }
-type AboutContent = { text: string }
 type Stat = { label: string; sublabel: string }
 type TrustPoint = { title: string; description: string }
 type IntroContent = { headline: string; text: string }
@@ -46,7 +45,6 @@ export function SiteContentForm({
   onSaved: () => void
 }) {
   const hero = (content.hero as HeroContent) ?? { headline: '', subhead: '' }
-  const about = (content.about as AboutContent) ?? { text: '' }
   const roomsHero = (content.rooms_hero as HeroContent) ?? { headline: '', subhead: '' }
   const transparencyIntro = (content.transparency_intro as IntroContent) ?? { headline: '', text: '' }
   const team = (content.team as Team) ?? { warden: { ...EMPTY_MEMBER }, owner: { ...EMPTY_MEMBER } }
@@ -54,7 +52,6 @@ export function SiteContentForm({
 
   const [heroHeadline, setHeroHeadline] = useState(hero.headline)
   const [heroSubhead, setHeroSubhead] = useState(hero.subhead)
-  const [aboutText, setAboutText] = useState(about.text)
   const [stats, setStats] = useState<Stat[]>(fourStats(content.trust_stats))
   const [trustPoints, setTrustPoints] = useState<TrustPoint[]>(fourTrustPoints(content.trust_points))
   const [roomsHeroHeadline, setRoomsHeroHeadline] = useState(roomsHero.headline)
@@ -92,7 +89,6 @@ export function SiteContentForm({
     setError(null)
     try {
       await updateSiteContent('hero', { headline: heroHeadline, subhead: heroSubhead })
-      await updateSiteContent('about', { text: aboutText })
       await updateSiteContent('trust_stats', stats)
       await updateSiteContent('trust_points', trustPoints)
       await updateSiteContent('rooms_hero', { headline: roomsHeroHeadline, subhead: roomsHeroSubhead })
