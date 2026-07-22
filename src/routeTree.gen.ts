@@ -11,11 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
-import { Route as LifeRouteImport } from './routes/life'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RoomsRouteImport } from './routes/rooms'
+import { Route as TransparencyRouteImport } from './routes/transparency'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedFeesRouteImport } from './routes/_authenticated.fees'
 import { Route as AuthenticatedMaintenanceRouteImport } from './routes/_authenticated.maintenance'
@@ -37,19 +36,9 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LifeRoute = LifeRouteImport.update({
-  id: '/life',
-  path: '/life',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -60,6 +49,11 @@ const LoginRoute = LoginRouteImport.update({
 const RoomsRoute = RoomsRouteImport.update({
   id: '/rooms',
   path: '/rooms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TransparencyRoute = TransparencyRouteImport.update({
+  id: '/transparency',
+  path: '/transparency',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -123,11 +117,10 @@ const AuthenticatedReceiptInvoiceIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/life': typeof LifeRoute
   '/login': typeof LoginRoute
   '/rooms': typeof RoomsRoute
+  '/transparency': typeof TransparencyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
   '/maintenance': typeof AuthenticatedMaintenanceRoute
@@ -142,11 +135,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/life': typeof LifeRoute
   '/login': typeof LoginRoute
   '/rooms': typeof RoomsRoute
+  '/transparency': typeof TransparencyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
   '/maintenance': typeof AuthenticatedMaintenanceRoute
@@ -163,11 +155,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/life': typeof LifeRoute
   '/login': typeof LoginRoute
   '/rooms': typeof RoomsRoute
+  '/transparency': typeof TransparencyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fees': typeof AuthenticatedFeesRoute
   '/_authenticated/maintenance': typeof AuthenticatedMaintenanceRoute
@@ -184,11 +175,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/contact'
-    | '/life'
     | '/login'
     | '/rooms'
+    | '/transparency'
     | '/dashboard'
     | '/fees'
     | '/maintenance'
@@ -203,11 +193,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/contact'
-    | '/life'
     | '/login'
     | '/rooms'
+    | '/transparency'
     | '/dashboard'
     | '/fees'
     | '/maintenance'
@@ -223,11 +212,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/about'
     | '/contact'
-    | '/life'
     | '/login'
     | '/rooms'
+    | '/transparency'
     | '/_authenticated/dashboard'
     | '/_authenticated/fees'
     | '/_authenticated/maintenance'
@@ -244,11 +232,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  LifeRoute: typeof LifeRoute
   LoginRoute: typeof LoginRoute
   RoomsRoute: typeof RoomsRoute
+  TransparencyRoute: typeof TransparencyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -267,25 +254,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/contact': {
       id: '/contact'
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/life': {
-      id: '/life'
-      path: '/life'
-      fullPath: '/life'
-      preLoaderRoute: typeof LifeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -300,6 +273,13 @@ declare module '@tanstack/react-router' {
       path: '/rooms'
       fullPath: '/rooms'
       preLoaderRoute: typeof RoomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/transparency': {
+      id: '/transparency'
+      path: '/transparency'
+      fullPath: '/transparency'
+      preLoaderRoute: typeof TransparencyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -417,11 +397,10 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  LifeRoute: LifeRoute,
   LoginRoute: LoginRoute,
   RoomsRoute: RoomsRoute,
+  TransparencyRoute: TransparencyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
