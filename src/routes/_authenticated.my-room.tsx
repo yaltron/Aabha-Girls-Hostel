@@ -9,14 +9,17 @@ import { TransferStatusCard } from '../components/transfers/TransferStatusCard'
 function MyRoomPage() {
   const [student, setStudent] = useState<Student | null>(null)
   const [rooms, setRooms] = useState<Room[]>([])
-  const [activeRequest, setActiveRequest] = useState<TransferRequest | null>(null)
+  const [blockingRequest, setBlockingRequest] = useState<TransferRequest | null>(null)
+  const [lastRejectedRequest, setLastRejectedRequest] = useState<TransferRequest | null>(null)
 
   function refetch() {
     fetchStudents().then((students) => setStudent(students[0] ?? null))
     fetchRoomsWithBeds().then(setRooms)
     fetchMyTransferRequests().then((requests) => {
-      const active = requests.find((r) => r.status === 'pending' || r.status === 'awaiting_confirmation' || r.status === 'rejected')
-      setActiveRequest(active ?? null)
+      const blocking = requests.find((r) => r.status === 'pending' || r.status === 'awaiting_confirmation')
+      setBlockingRequest(blocking ?? null)
+      const lastRejected = requests.find((r) => r.status === 'rejected')
+      setLastRejectedRequest(blocking ? null : lastRejected ?? null)
     })
   }
 
@@ -38,10 +41,13 @@ function MyRoomPage() {
           <p className="font-display text-2xl text-primary mt-2">{currentRoom.room_number} - Bed {currentBed.bed_label}</p>
         </div>
       )}
-      {activeRequest ? (
-        <TransferStatusCard request={activeRequest} onConfirmed={refetch} />
+      {blockingRequest ? (
+        <TransferStatusCard request={blockingRequest} onConfirmed={refetch} />
       ) : (
-        student.bed_id && <TransferRequestForm fromBedId={student.bed_id} onSubmitted={refetch} />
+        <>
+          {lastRejectedRequest && <TransferStatusCard request={lastRejectedRequest} onConfirmed={refetch} />}
+          {student.bed_id && <TransferRequestForm fromBedId={student.bed_id} onSubmitted={refetch} />}
+        </>
       )}
     </div>
   )

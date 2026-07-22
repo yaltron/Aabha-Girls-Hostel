@@ -67,3 +67,12 @@ begin
   end if;
 end;
 $$;
+
+-- Defense in depth: restrict EXECUTE to authenticated sessions only,
+-- matching the posture established for confirm_transfer in migration
+-- 0013. RLS already blocks any non-owner/warden write through these
+-- invoker-mode functions, so this is a second layer, not the only one.
+revoke execute on function public.approve_transfer_request(uuid, uuid) from public;
+grant execute on function public.approve_transfer_request(uuid, uuid) to authenticated;
+revoke execute on function public.reject_transfer_request(uuid, text) from public;
+grant execute on function public.reject_transfer_request(uuid, text) to authenticated;
