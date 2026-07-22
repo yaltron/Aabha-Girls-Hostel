@@ -1,7 +1,7 @@
 import { supabase } from './supabase'
 
 export type InvoiceStatus = 'unpaid' | 'paid'
-export type PaymentMethod = 'cash' | 'esewa' | 'khalti'
+export type PaymentMethod = 'cash' | 'esewa' | 'khalti' | 'fonepay'
 
 export type Invoice = {
   id: string

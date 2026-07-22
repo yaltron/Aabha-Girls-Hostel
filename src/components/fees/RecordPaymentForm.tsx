@@ -43,6 +43,7 @@ export function RecordPaymentForm({
           <option value="cash">Cash</option>
           <option value="esewa">eSewa</option>
           <option value="khalti">Khalti</option>
+          <option value="fonepay">FonePay</option>
         </select>
       </div>
       <div className="space-y-2">
