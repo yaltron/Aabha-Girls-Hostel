@@ -14,7 +14,7 @@ import { MenuEditor } from '../components/admin/MenuEditor'
 import { InquiriesInbox } from '../components/admin/InquiriesInbox'
 import { BookingsQueue } from '../components/admin/BookingsQueue'
 
-const MEDIA_CATEGORIES = ['highlight', 'room_single', 'room_twin', 'room_triple', 'facility'] as const
+const MEDIA_CATEGORIES = ['hero', 'rooms_hero', 'team_warden', 'team_owner', 'highlight', 'room_single', 'room_twin', 'room_triple', 'facility'] as const
 
 function SiteContentPage() {
   const [content, setContent] = useState<Record<string, unknown>>({})

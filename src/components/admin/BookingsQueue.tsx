@@ -42,6 +42,13 @@ function BookingRow({
         <p className="text-xs uppercase tracking-wider text-secondary mt-1">
           {booking.room_type} - Preferred {booking.preferred_date}
         </p>
+        {booking.guardian_name && <p className="text-on-surface-variant text-sm">Guardian: {booking.guardian_name}</p>}
+        {booking.emergency_contact_name && (
+          <p className="text-on-surface-variant text-sm">
+            Emergency contact: {booking.emergency_contact_name}{booking.emergency_contact_phone ? ` (${booking.emergency_contact_phone})` : ''}
+          </p>
+        )}
+        {booking.note && <p className="text-on-surface-variant text-sm italic">"{booking.note}"</p>}
       </div>
       {vacantBeds.length > 0 && (
         <div className="space-y-2">
