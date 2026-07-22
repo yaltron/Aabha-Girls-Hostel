@@ -1,6 +1,6 @@
 import { supabase } from './supabase'
 
-export type MediaCategory = 'highlight' | 'room_single' | 'room_twin' | 'room_triple' | 'facility'
+export type MediaCategory = 'hero' | 'rooms_hero' | 'team_warden' | 'team_owner' | 'highlight' | 'room_single' | 'room_twin' | 'room_triple' | 'facility'
 
 export type MediaItem = {
   id: string
