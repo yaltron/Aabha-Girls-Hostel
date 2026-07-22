@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 
 const mockBookings = [
-  { id: 'booking-1', name: 'Sita', phone: '9800000003', guardian_phone: '9800000004', room_type: 'twin', preferred_date: '2026-08-01', status: 'pending', reserved_bed_id: null, created_at: '2026-07-01T00:00:00Z' },
+  { id: 'booking-1', name: 'Sita', phone: '9800000003', guardian_name: 'Guardian Sharma', guardian_phone: '9800000004', emergency_contact_name: 'Aunt Gita', emergency_contact_phone: '9800000099', note: 'Arriving by evening bus', room_type: 'twin', preferred_date: '2026-08-01', status: 'pending', reserved_bed_id: null, created_at: '2026-07-01T00:00:00Z' },
 ]
 
 const mockApprovedBookings = [
-  { id: 'booking-2', name: 'Ram', phone: '9800000005', guardian_phone: '9800000006', room_type: 'single', preferred_date: '2026-08-02', status: 'approved', reserved_bed_id: 'bed-9', created_at: '2026-07-02T00:00:00Z' },
+  { id: 'booking-2', name: 'Ram', phone: '9800000005', guardian_name: null, guardian_phone: '9800000006', emergency_contact_name: null, emergency_contact_phone: null, note: null, room_type: 'single', preferred_date: '2026-08-02', status: 'approved', reserved_bed_id: 'bed-9', created_at: '2026-07-02T00:00:00Z' },
 ]
 
 const rpcMock = vi.fn(() => Promise.resolve({ error: null }))

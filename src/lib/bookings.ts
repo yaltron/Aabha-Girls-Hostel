@@ -6,7 +6,11 @@ export type Booking = {
   id: string
   name: string
   phone: string
+  guardian_name: string | null
   guardian_phone: string
+  emergency_contact_name: string | null
+  emergency_contact_phone: string | null
+  note: string | null
   room_type: 'single' | 'twin' | 'triple'
   preferred_date: string
   status: BookingStatus

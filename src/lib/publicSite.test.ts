@@ -79,15 +79,51 @@ describe('submitInquiry', () => {
 })
 
 describe('submitBooking', () => {
-  it('inserts a booking with the given fields', async () => {
+  it('inserts a booking with the given fields, including the optional detail fields', async () => {
     const { submitBooking } = await import('./publicSite')
-    await submitBooking({ name: 'Sita', phone: '9800000003', guardianPhone: '9800000004', roomType: 'twin', preferredDate: '2026-08-01' })
+    await submitBooking({
+      name: 'Sita',
+      phone: '9800000003',
+      guardianName: 'Guardian Sharma',
+      guardianPhone: '9800000004',
+      emergencyContactName: 'Aunt Gita',
+      emergencyContactPhone: '9800000099',
+      roomType: 'twin',
+      preferredDate: '2026-08-01',
+      note: 'Arriving by evening bus',
+    })
     expect(insertMock).toHaveBeenCalledWith({
       name: 'Sita',
       phone: '9800000003',
+      guardian_name: 'Guardian Sharma',
       guardian_phone: '9800000004',
+      emergency_contact_name: 'Aunt Gita',
+      emergency_contact_phone: '9800000099',
       room_type: 'twin',
       preferred_date: '2026-08-01',
+      note: 'Arriving by evening bus',
+    })
+  })
+
+  it('omits optional fields as null when not provided', async () => {
+    const { submitBooking } = await import('./publicSite')
+    await submitBooking({
+      name: 'Sita',
+      phone: '9800000003',
+      guardianPhone: '9800000004',
+      roomType: 'twin',
+      preferredDate: '2026-08-01',
+    })
+    expect(insertMock).toHaveBeenCalledWith({
+      name: 'Sita',
+      phone: '9800000003',
+      guardian_name: null,
+      guardian_phone: '9800000004',
+      emergency_contact_name: null,
+      emergency_contact_phone: null,
+      room_type: 'twin',
+      preferred_date: '2026-08-01',
+      note: null,
     })
   })
 })

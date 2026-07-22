@@ -85,16 +85,24 @@ export async function submitInquiry(input: { name: string; phone: string; messag
 export async function submitBooking(input: {
   name: string
   phone: string
+  guardianName?: string
   guardianPhone: string
+  emergencyContactName?: string
+  emergencyContactPhone?: string
   roomType: 'single' | 'twin' | 'triple'
   preferredDate: string
+  note?: string
 }): Promise<void> {
   const { error } = await supabase.from('bookings').insert({
     name: input.name,
     phone: input.phone,
+    guardian_name: input.guardianName ?? null,
     guardian_phone: input.guardianPhone,
+    emergency_contact_name: input.emergencyContactName ?? null,
+    emergency_contact_phone: input.emergencyContactPhone ?? null,
     room_type: input.roomType,
     preferred_date: input.preferredDate,
+    note: input.note ?? null,
   })
   if (error) throw error
 }
