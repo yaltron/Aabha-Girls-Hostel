@@ -8,3 +8,10 @@ create view public.public_site_media as
   order by sort_order;
 
 grant select on public.public_site_media to anon;
+
+create view public.public_reviews as
+  select id, author_name, quote from public.reviews
+  where is_published = true
+  order by display_order;
+
+grant select on public.public_reviews to anon;
