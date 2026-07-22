@@ -5,6 +5,7 @@ const mockReviews = [
 ]
 
 const insertMock = vi.fn(() => Promise.resolve({ error: null }))
+const updateMock = vi.fn(() => ({ eq: updateEqMock }))
 const updateEqMock = vi.fn(() => Promise.resolve({ error: null }))
 const deleteEqMock = vi.fn(() => Promise.resolve({ error: null }))
 
@@ -13,7 +14,7 @@ vi.mock('./supabase', () => ({
     from: vi.fn(() => ({
       select: vi.fn(() => ({ order: vi.fn(() => Promise.resolve({ data: mockReviews, error: null })) })),
       insert: insertMock,
-      update: vi.fn(() => ({ eq: updateEqMock })),
+      update: updateMock,
       delete: vi.fn(() => ({ eq: deleteEqMock })),
     })),
   },
@@ -35,9 +36,10 @@ describe('createReview', () => {
 })
 
 describe('updateReview', () => {
-  it('updates only the given fields', async () => {
+  it('sends only the given fields', async () => {
     const { updateReview } = await import('./reviews')
     await updateReview('review-1', { isPublished: false })
+    expect(updateMock).toHaveBeenCalledWith({ is_published: false })
     expect(updateEqMock).toHaveBeenCalledWith('id', 'review-1')
   })
 })
