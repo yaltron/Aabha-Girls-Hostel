@@ -5,12 +5,13 @@ const mockInquiries = [
 ]
 
 const updateEqMock = vi.fn(() => Promise.resolve({ error: null }))
+const updateMock = vi.fn(() => ({ eq: updateEqMock }))
 
 vi.mock('./supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({ order: vi.fn(() => Promise.resolve({ data: mockInquiries, error: null })) })),
-      update: vi.fn(() => ({ eq: updateEqMock })),
+      update: updateMock,
     })),
   },
 }))
@@ -26,6 +27,7 @@ describe('updateInquiryStatus', () => {
   it('updates the given inquiry to the given status', async () => {
     const { updateInquiryStatus } = await import('./inquiries')
     await updateInquiryStatus('inq-1', 'contacted')
+    expect(updateMock).toHaveBeenCalledWith({ status: 'contacted' })
     expect(updateEqMock).toHaveBeenCalledWith('id', 'inq-1')
   })
 })
