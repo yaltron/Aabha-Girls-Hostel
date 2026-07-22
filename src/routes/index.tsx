@@ -17,12 +17,14 @@ type TrustPoint = { title: string; description: string }
 function HomePage() {
   const [content, setContent] = useState<Record<string, unknown>>({})
   const [highlights, setHighlights] = useState<PublicMediaItem[]>([])
+  const [media, setMedia] = useState<PublicMediaItem[]>([])
   const [reviews, setReviews] = useState<PublicReview[]>([])
   const [availability, setAvailability] = useState<PublicRoomAvailability[]>([])
 
   useEffect(() => {
     fetchPublicSiteContent().then(setContent)
     fetchPublicMedia('highlight').then(setHighlights)
+    fetchPublicMedia().then(setMedia)
     fetchPublicReviews().then(setReviews)
     fetchPublicRoomAvailability().then(setAvailability)
   }, [])
@@ -86,7 +88,7 @@ function HomePage() {
             {availability.map((room) => (
               <div key={room.room_type} className="bg-surface-container-lowest rounded-xxl shadow-premium overflow-hidden">
                 <img
-                  src={highlights.find((h) => h.category === `room_${room.room_type}`)?.url}
+                  src={media.find((m) => m.category === `room_${room.room_type}`)?.url}
                   alt={room.room_type}
                   className="w-full h-48 object-cover"
                   loading="lazy"
