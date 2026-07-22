@@ -40,6 +40,7 @@ describe('updateReview', () => {
     const { updateReview } = await import('./reviews')
     await updateReview('review-1', { isPublished: false })
     expect(updateMock).toHaveBeenCalledWith({ is_published: false })
+    expect(Object.keys(updateMock.mock.calls[0][0] as object)).toEqual(['is_published'])
     expect(updateEqMock).toHaveBeenCalledWith('id', 'review-1')
   })
 })
