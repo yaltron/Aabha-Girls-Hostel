@@ -1,15 +1,29 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { fetchStudents, fetchUnassignedStudentProfiles, type Student, type UnassignedProfile } from '../lib/students'
+import {
+  fetchStudents,
+  fetchUnassignedStudentProfiles,
+  fetchUnlinkedGuardianProfiles,
+  type Student,
+  type UnassignedProfile,
+  type UnlinkedGuardianProfile,
+} from '../lib/students'
+import { fetchGuardianUpdateForStudent } from '../lib/guardian'
 import { fetchRoomsWithBeds, type Room } from '../lib/rooms'
 import { ResidentList } from '../components/students/ResidentList'
 import { CheckInForm } from '../components/students/CheckInForm'
+import { LinkGuardianForm } from '../components/students/LinkGuardianForm'
+import { PostUpdateForm } from '../components/students/PostUpdateForm'
 
 function ResidentsPage() {
   const [students, setStudents] = useState<Student[]>([])
   const [rooms, setRooms] = useState<Room[]>([])
   const [unassignedProfiles, setUnassignedProfiles] = useState<UnassignedProfile[]>([])
   const [selectedProfileId, setSelectedProfileId] = useState('')
+  const [linkingStudent, setLinkingStudent] = useState<Student | null>(null)
+  const [unlinkedGuardians, setUnlinkedGuardians] = useState<UnlinkedGuardianProfile[]>([])
+  const [postingUpdateStudent, setPostingUpdateStudent] = useState<Student | null>(null)
+  const [updateInitialMessage, setUpdateInitialMessage] = useState('')
 
   function refetchAll() {
     fetchStudents().then(setStudents)
@@ -27,6 +41,31 @@ function ResidentsPage() {
   function handleCheckedIn() {
     setSelectedProfileId('')
     refetchAll()
+  }
+
+  function handleLinkGuardianClick(student: Student) {
+    setPostingUpdateStudent(null)
+    fetchUnlinkedGuardianProfiles().then((guardians) => {
+      setUnlinkedGuardians(guardians)
+      setLinkingStudent(student)
+    })
+  }
+
+  function handleLinked() {
+    setLinkingStudent(null)
+    refetchAll()
+  }
+
+  function handlePostUpdateClick(student: Student) {
+    setLinkingStudent(null)
+    fetchGuardianUpdateForStudent(student.id).then((update) => {
+      setUpdateInitialMessage(update?.message ?? '')
+      setPostingUpdateStudent(student)
+    })
+  }
+
+  function handlePosted() {
+    setPostingUpdateStudent(null)
   }
 
   const vacantBeds = rooms.flatMap((r) => r.beds).filter((b) => b.status === 'vacant')
@@ -66,7 +105,31 @@ function ResidentsPage() {
         )}
       </div>
 
-      <ResidentList students={students} />
+      <ResidentList students={students} onLinkGuardian={handleLinkGuardianClick} onPostUpdate={handlePostUpdateClick} />
+
+      {linkingStudent && (
+        <div className="space-y-2">
+          <h3 className="font-display text-lg text-on-surface">Link Guardian for {linkingStudent.full_name}</h3>
+          {unlinkedGuardians.length === 0 ? (
+            <p className="text-on-surface-variant text-sm">
+              No unlinked guardian accounts - create one via the Supabase dashboard first
+            </p>
+          ) : (
+            <LinkGuardianForm studentId={linkingStudent.id} unlinkedGuardians={unlinkedGuardians} onLinked={handleLinked} />
+          )}
+        </div>
+      )}
+
+      {postingUpdateStudent && (
+        <div className="space-y-2">
+          <h3 className="font-display text-lg text-on-surface">Post Update for {postingUpdateStudent.full_name}</h3>
+          <PostUpdateForm
+            studentId={postingUpdateStudent.id}
+            initialMessage={updateInitialMessage}
+            onPosted={handlePosted}
+          />
+        </div>
+      )}
     </div>
   )
 }
