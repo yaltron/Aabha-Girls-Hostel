@@ -115,7 +115,7 @@ function ResidentsPage() {
               No unlinked guardian accounts - create one via the Supabase dashboard first
             </p>
           ) : (
-            <LinkGuardianForm studentId={linkingStudent.id} unlinkedGuardians={unlinkedGuardians} onLinked={handleLinked} />
+            <LinkGuardianForm key={linkingStudent.id} studentId={linkingStudent.id} unlinkedGuardians={unlinkedGuardians} onLinked={handleLinked} />
           )}
         </div>
       )}
@@ -124,6 +124,7 @@ function ResidentsPage() {
         <div className="space-y-2">
           <h3 className="font-display text-lg text-on-surface">Post Update for {postingUpdateStudent.full_name}</h3>
           <PostUpdateForm
+            key={postingUpdateStudent.id}
             studentId={postingUpdateStudent.id}
             initialMessage={updateInitialMessage}
             onPosted={handlePosted}
