@@ -14,7 +14,7 @@ type ReceiptData = {
 async function fetchReceipt(invoiceId: string): Promise<ReceiptData | null> {
   const { data: invoice, error: invoiceError } = await supabase
     .from('invoices')
-    .select('billing_month, amount, students(profiles(full_name))')
+    .select('billing_month, amount, students(profiles!students_id_fkey(full_name))')
     .eq('id', invoiceId)
     .single()
   if (invoiceError) throw invoiceError

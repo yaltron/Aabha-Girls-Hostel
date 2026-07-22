@@ -24,7 +24,7 @@ export async function fetchMyTickets(): Promise<Ticket[]> {
 export async function fetchOpenTickets(): Promise<TicketWithStudent[]> {
   const { data, error } = await supabase
     .from('maintenance_tickets')
-    .select('*, students(profiles(full_name))')
+    .select('*, students(profiles!students_id_fkey(full_name))')
     .eq('status', 'open')
   if (error) throw error
   return (data ?? []).map((row: any) => ({

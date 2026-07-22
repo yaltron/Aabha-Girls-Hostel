@@ -12,7 +12,7 @@ export type Student = {
 }
 
 export async function fetchStudents(): Promise<Student[]> {
-  const { data, error } = await supabase.from('students').select('*, profiles(full_name)')
+  const { data, error } = await supabase.from('students').select('*, profiles!students_id_fkey(full_name)')
   if (error) throw error
   return (data ?? []).map((row: any) => ({
     id: row.id,
@@ -31,7 +31,7 @@ export type UnassignedProfile = { id: string; full_name: string }
 export async function fetchUnassignedStudentProfiles(): Promise<UnassignedProfile[]> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, full_name, students(id)')
+    .select('id, full_name, students!students_id_fkey(id)')
     .eq('role', 'student')
   if (error) throw error
   return (data ?? [])

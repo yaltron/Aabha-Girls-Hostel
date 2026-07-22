@@ -16,7 +16,7 @@ export type Invoice = {
 export async function fetchDuesInvoices(): Promise<Invoice[]> {
   const { data, error } = await supabase
     .from('invoices')
-    .select('*, students(profiles(full_name))')
+    .select('*, students(profiles!students_id_fkey(full_name))')
     .eq('status', 'unpaid')
   if (error) throw error
   return (data ?? []).map((row: any) => ({

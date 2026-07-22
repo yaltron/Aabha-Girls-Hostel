@@ -29,7 +29,7 @@ export async function fetchMyTransferRequests(): Promise<TransferRequest[]> {
 export async function fetchPendingTransferRequests(): Promise<TransferRequestWithStudent[]> {
   const { data, error } = await supabase
     .from('transfer_requests')
-    .select('*, students(profiles(full_name))')
+    .select('*, students(profiles!students_id_fkey(full_name))')
     .eq('status', 'pending')
   if (error) throw error
   return (data ?? []).map((row: any) => ({
