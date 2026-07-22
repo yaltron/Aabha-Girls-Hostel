@@ -62,6 +62,9 @@ create policy "bookings_anon_insert" on public.bookings
   to anon
   with check (status = 'pending' and reserved_bed_id is null);
 
+grant insert on public.inquiries to anon;
+grant insert on public.bookings to anon;
+
 create policy "menu_items_owner_warden_full_access" on public.menu_items
   for all
   using (public.current_role() in ('owner', 'warden'))
