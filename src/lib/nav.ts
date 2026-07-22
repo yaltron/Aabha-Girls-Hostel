@@ -3,7 +3,7 @@ export type NavItem = { label: string; path: string }
 
 const DASHBOARD: NavItem = { label: 'Dashboard', path: '/dashboard' }
 const FINANCIAL_SETTINGS: NavItem = { label: 'Financial Settings', path: '/settings/financial' }
-const ROOMS: NavItem = { label: 'Rooms', path: '/rooms' }
+const ROOMS: NavItem = { label: 'Rooms', path: '/room-board' }
 const RESIDENTS: NavItem = { label: 'Residents', path: '/residents' }
 const FEES: NavItem = { label: 'Fees', path: '/fees' }
 const REQUESTS: NavItem = { label: 'Requests', path: '/requests' }

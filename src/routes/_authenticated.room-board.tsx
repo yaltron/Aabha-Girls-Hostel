@@ -18,6 +18,6 @@ function RoomsPage() {
   )
 }
 
-export const Route = createFileRoute('/_authenticated/rooms')({
+export const Route = createFileRoute('/_authenticated/room-board')({
   component: RoomsPage,
 })

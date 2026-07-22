@@ -9,8 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as LifeRouteImport } from './routes/life'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as RoomsRouteImport } from './routes/rooms'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedFeesRouteImport } from './routes/_authenticated.fees'
 import { Route as AuthenticatedMaintenanceRouteImport } from './routes/_authenticated.maintenance'
@@ -19,17 +24,42 @@ import { Route as AuthenticatedMyRoomRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated.notices'
 import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated.requests'
 import { Route as AuthenticatedResidentsRouteImport } from './routes/_authenticated.residents'
-import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.rooms'
+import { Route as AuthenticatedRoomBoardRouteImport } from './routes/_authenticated.room-board'
 import { Route as AuthenticatedSiteContentRouteImport } from './routes/_authenticated.site-content'
 import { Route as AuthenticatedReceiptInvoiceIdRouteImport } from './routes/_authenticated.receipt.$invoiceId'
 
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LifeRoute = LifeRouteImport.update({
+  id: '/life',
+  path: '/life',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoomsRoute = RoomsRouteImport.update({
+  id: '/rooms',
+  path: '/rooms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -73,9 +103,9 @@ const AuthenticatedResidentsRoute = AuthenticatedResidentsRouteImport.update({
   path: '/residents',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedRoomsRoute = AuthenticatedRoomsRouteImport.update({
-  id: '/rooms',
-  path: '/rooms',
+const AuthenticatedRoomBoardRoute = AuthenticatedRoomBoardRouteImport.update({
+  id: '/room-board',
+  path: '/room-board',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedSiteContentRoute =
@@ -92,8 +122,12 @@ const AuthenticatedReceiptInvoiceIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof AuthenticatedRouteWithChildren
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/life': typeof LifeRoute
   '/login': typeof LoginRoute
+  '/rooms': typeof RoomsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
   '/maintenance': typeof AuthenticatedMaintenanceRoute
@@ -102,13 +136,17 @@ export interface FileRoutesByFullPath {
   '/notices': typeof AuthenticatedNoticesRoute
   '/requests': typeof AuthenticatedRequestsRoute
   '/residents': typeof AuthenticatedResidentsRoute
-  '/rooms': typeof AuthenticatedRoomsRoute
+  '/room-board': typeof AuthenticatedRoomBoardRoute
   '/site-content': typeof AuthenticatedSiteContentRoute
   '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof AuthenticatedRouteWithChildren
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/life': typeof LifeRoute
   '/login': typeof LoginRoute
+  '/rooms': typeof RoomsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
   '/maintenance': typeof AuthenticatedMaintenanceRoute
@@ -117,14 +155,19 @@ export interface FileRoutesByTo {
   '/notices': typeof AuthenticatedNoticesRoute
   '/requests': typeof AuthenticatedRequestsRoute
   '/residents': typeof AuthenticatedResidentsRoute
-  '/rooms': typeof AuthenticatedRoomsRoute
+  '/room-board': typeof AuthenticatedRoomBoardRoute
   '/site-content': typeof AuthenticatedSiteContentRoute
   '/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/life': typeof LifeRoute
   '/login': typeof LoginRoute
+  '/rooms': typeof RoomsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fees': typeof AuthenticatedFeesRoute
   '/_authenticated/maintenance': typeof AuthenticatedMaintenanceRoute
@@ -133,7 +176,7 @@ export interface FileRoutesById {
   '/_authenticated/notices': typeof AuthenticatedNoticesRoute
   '/_authenticated/requests': typeof AuthenticatedRequestsRoute
   '/_authenticated/residents': typeof AuthenticatedResidentsRoute
-  '/_authenticated/rooms': typeof AuthenticatedRoomsRoute
+  '/_authenticated/room-board': typeof AuthenticatedRoomBoardRoute
   '/_authenticated/site-content': typeof AuthenticatedSiteContentRoute
   '/_authenticated/receipt/$invoiceId': typeof AuthenticatedReceiptInvoiceIdRoute
 }
@@ -141,7 +184,11 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/contact'
+    | '/life'
     | '/login'
+    | '/rooms'
     | '/dashboard'
     | '/fees'
     | '/maintenance'
@@ -150,13 +197,17 @@ export interface FileRouteTypes {
     | '/notices'
     | '/requests'
     | '/residents'
-    | '/rooms'
+    | '/room-board'
     | '/site-content'
     | '/receipt/$invoiceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/contact'
+    | '/life'
     | '/login'
+    | '/rooms'
     | '/dashboard'
     | '/fees'
     | '/maintenance'
@@ -165,13 +216,18 @@ export interface FileRouteTypes {
     | '/notices'
     | '/requests'
     | '/residents'
-    | '/rooms'
+    | '/room-board'
     | '/site-content'
     | '/receipt/$invoiceId'
   id:
     | '__root__'
+    | '/'
     | '/_authenticated'
+    | '/about'
+    | '/contact'
+    | '/life'
     | '/login'
+    | '/rooms'
     | '/_authenticated/dashboard'
     | '/_authenticated/fees'
     | '/_authenticated/maintenance'
@@ -180,18 +236,30 @@ export interface FileRouteTypes {
     | '/_authenticated/notices'
     | '/_authenticated/requests'
     | '/_authenticated/residents'
-    | '/_authenticated/rooms'
+    | '/_authenticated/room-board'
     | '/_authenticated/site-content'
     | '/_authenticated/receipt/$invoiceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
+  LifeRoute: typeof LifeRoute
   LoginRoute: typeof LoginRoute
+  RoomsRoute: typeof RoomsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -199,11 +267,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/life': {
+      id: '/life'
+      path: '/life'
+      fullPath: '/life'
+      preLoaderRoute: typeof LifeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rooms': {
+      id: '/rooms'
+      path: '/rooms'
+      fullPath: '/rooms'
+      preLoaderRoute: typeof RoomsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -262,11 +358,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedResidentsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/rooms': {
-      id: '/_authenticated/rooms'
-      path: '/rooms'
-      fullPath: '/rooms'
-      preLoaderRoute: typeof AuthenticatedRoomsRouteImport
+    '/_authenticated/room-board': {
+      id: '/_authenticated/room-board'
+      path: '/room-board'
+      fullPath: '/room-board'
+      preLoaderRoute: typeof AuthenticatedRoomBoardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/site-content': {
@@ -295,7 +391,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
   AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
   AuthenticatedResidentsRoute: typeof AuthenticatedResidentsRoute
-  AuthenticatedRoomsRoute: typeof AuthenticatedRoomsRoute
+  AuthenticatedRoomBoardRoute: typeof AuthenticatedRoomBoardRoute
   AuthenticatedSiteContentRoute: typeof AuthenticatedSiteContentRoute
   AuthenticatedReceiptInvoiceIdRoute: typeof AuthenticatedReceiptInvoiceIdRoute
 }
@@ -309,7 +405,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
   AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,
   AuthenticatedResidentsRoute: AuthenticatedResidentsRoute,
-  AuthenticatedRoomsRoute: AuthenticatedRoomsRoute,
+  AuthenticatedRoomBoardRoute: AuthenticatedRoomBoardRoute,
   AuthenticatedSiteContentRoute: AuthenticatedSiteContentRoute,
   AuthenticatedReceiptInvoiceIdRoute: AuthenticatedReceiptInvoiceIdRoute,
 }
@@ -319,8 +415,13 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
+  LifeRoute: LifeRoute,
   LoginRoute: LoginRoute,
+  RoomsRoute: RoomsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
