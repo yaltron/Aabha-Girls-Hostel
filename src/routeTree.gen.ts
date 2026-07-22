@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedFeesRouteImport } from './routes/_authenticated.fees'
 import { Route as AuthenticatedMaintenanceRouteImport } from './routes/_authenticated.maintenance'
+import { Route as AuthenticatedMyChildRouteImport } from './routes/_authenticated.my-child'
 import { Route as AuthenticatedMyRoomRouteImport } from './routes/_authenticated.my-room'
 import { Route as AuthenticatedNoticesRouteImport } from './routes/_authenticated.notices'
 import { Route as AuthenticatedRequestsRouteImport } from './routes/_authenticated.requests'
@@ -46,6 +47,11 @@ const AuthenticatedMaintenanceRoute =
     path: '/maintenance',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedMyChildRoute = AuthenticatedMyChildRouteImport.update({
+  id: '/my-child',
+  path: '/my-child',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedMyRoomRoute = AuthenticatedMyRoomRouteImport.update({
   id: '/my-room',
   path: '/my-room',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
   '/maintenance': typeof AuthenticatedMaintenanceRoute
+  '/my-child': typeof AuthenticatedMyChildRoute
   '/my-room': typeof AuthenticatedMyRoomRoute
   '/notices': typeof AuthenticatedNoticesRoute
   '/requests': typeof AuthenticatedRequestsRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/fees': typeof AuthenticatedFeesRoute
   '/maintenance': typeof AuthenticatedMaintenanceRoute
+  '/my-child': typeof AuthenticatedMyChildRoute
   '/my-room': typeof AuthenticatedMyRoomRoute
   '/notices': typeof AuthenticatedNoticesRoute
   '/requests': typeof AuthenticatedRequestsRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/fees': typeof AuthenticatedFeesRoute
   '/_authenticated/maintenance': typeof AuthenticatedMaintenanceRoute
+  '/_authenticated/my-child': typeof AuthenticatedMyChildRoute
   '/_authenticated/my-room': typeof AuthenticatedMyRoomRoute
   '/_authenticated/notices': typeof AuthenticatedNoticesRoute
   '/_authenticated/requests': typeof AuthenticatedRequestsRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/fees'
     | '/maintenance'
+    | '/my-child'
     | '/my-room'
     | '/notices'
     | '/requests'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/fees'
     | '/maintenance'
+    | '/my-child'
     | '/my-room'
     | '/notices'
     | '/requests'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/fees'
     | '/_authenticated/maintenance'
+    | '/_authenticated/my-child'
     | '/_authenticated/my-room'
     | '/_authenticated/notices'
     | '/_authenticated/requests'
@@ -200,6 +212,13 @@ declare module '@tanstack/react-router' {
       path: '/maintenance'
       fullPath: '/maintenance'
       preLoaderRoute: typeof AuthenticatedMaintenanceRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/my-child': {
+      id: '/_authenticated/my-child'
+      path: '/my-child'
+      fullPath: '/my-child'
+      preLoaderRoute: typeof AuthenticatedMyChildRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/my-room': {
@@ -251,6 +270,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedFeesRoute: typeof AuthenticatedFeesRoute
   AuthenticatedMaintenanceRoute: typeof AuthenticatedMaintenanceRoute
+  AuthenticatedMyChildRoute: typeof AuthenticatedMyChildRoute
   AuthenticatedMyRoomRoute: typeof AuthenticatedMyRoomRoute
   AuthenticatedNoticesRoute: typeof AuthenticatedNoticesRoute
   AuthenticatedRequestsRoute: typeof AuthenticatedRequestsRoute
@@ -263,6 +283,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedFeesRoute: AuthenticatedFeesRoute,
   AuthenticatedMaintenanceRoute: AuthenticatedMaintenanceRoute,
+  AuthenticatedMyChildRoute: AuthenticatedMyChildRoute,
   AuthenticatedMyRoomRoute: AuthenticatedMyRoomRoute,
   AuthenticatedNoticesRoute: AuthenticatedNoticesRoute,
   AuthenticatedRequestsRoute: AuthenticatedRequestsRoute,

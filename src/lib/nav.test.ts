@@ -27,8 +27,8 @@ describe('getNavItemsForRole', () => {
     expect(items).toEqual(['Dashboard', 'My Room', 'Maintenance', 'Notices'])
   })
 
-  it('gives guardian only their dashboard', () => {
+  it('gives guardian only their dashboard and My Child', () => {
     const items = getNavItemsForRole('guardian').map((i) => i.label)
-    expect(items).toEqual(['Dashboard'])
+    expect(items).toEqual(['Dashboard', 'My Child'])
   })
 })

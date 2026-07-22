@@ -10,6 +10,7 @@ const REQUESTS: NavItem = { label: 'Requests', path: '/requests' }
 const MY_ROOM: NavItem = { label: 'My Room', path: '/my-room' }
 const MAINTENANCE: NavItem = { label: 'Maintenance', path: '/maintenance' }
 const NOTICES: NavItem = { label: 'Notices', path: '/notices' }
+const MY_CHILD: NavItem = { label: 'My Child', path: '/my-child' }
 
 export function getNavItemsForRole(role: Role): NavItem[] {
   switch (role) {
@@ -20,6 +21,6 @@ export function getNavItemsForRole(role: Role): NavItem[] {
     case 'student':
       return [DASHBOARD, MY_ROOM, MAINTENANCE, NOTICES]
     case 'guardian':
-      return [DASHBOARD]
+      return [DASHBOARD, MY_CHILD]
   }
 }
