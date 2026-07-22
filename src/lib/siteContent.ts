@@ -1,6 +1,17 @@
 import { supabase } from './supabase'
 
-export type SiteContentKey = 'hero' | 'trust_points' | 'about' | 'safety_rules' | 'contact'
+export type SiteContentKey =
+  | 'hero'
+  | 'about'
+  | 'trust_stats'
+  | 'trust_points'
+  | 'rooms_hero'
+  | 'transparency_intro'
+  | 'safety_protocol'
+  | 'safety_rules'
+  | 'team'
+  | 'fee_schedule'
+  | 'contact'
 
 export async function fetchSiteContent(): Promise<Record<string, unknown>> {
   const { data, error } = await supabase.from('site_content').select('*')
