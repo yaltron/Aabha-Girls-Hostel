@@ -77,7 +77,7 @@ function HomePage() {
         <div className="space-y-8">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-secondary text-xs uppercase tracking-wide">The Sanctuary Rooms</p>
+              <p className="text-secondary text-xs uppercase tracking-wide">Aabha Rooms</p>
               <h2 className="font-display text-3xl text-on-surface">Designed for Focus and Comfort</h2>
             </div>
             <Link to="/rooms" className="text-primary font-medium hover:underline">View All Details →</Link>
