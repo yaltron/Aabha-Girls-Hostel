@@ -1,6 +1,25 @@
 @config "../tailwind.config.ts";
 @import "tailwindcss";
 
+:root {
+  /* This app is light-themed only. Without this, browsers render native
+     form controls (select's option popup in particular) using the OS's
+     dark/light preference regardless of page CSS - on a system in dark
+     mode, that paints the dropdown popup with a dark native background
+     while the option text still inherits this page's dark-brown text
+     color, making every option invisible even though the closed select
+     looks fine. */
+  color-scheme: light;
+}
+
+/* :root's color-scheme fixes the closed control everywhere, but some
+   browsers (Chrome on macOS in particular) only apply it to the native
+   select popup itself if the property is set on the select element,
+   not just inherited from an ancestor - hence this explicit rule. */
+select {
+  color-scheme: light;
+}
+
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   display: inline-block;

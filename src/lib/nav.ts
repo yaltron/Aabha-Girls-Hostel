@@ -2,7 +2,6 @@ export type Role = 'owner' | 'warden' | 'student' | 'guardian'
 export type NavItem = { label: string; path: string }
 
 const DASHBOARD: NavItem = { label: 'Dashboard', path: '/dashboard' }
-const FINANCIAL_SETTINGS: NavItem = { label: 'Financial Settings', path: '/settings/financial' }
 const ROOMS: NavItem = { label: 'Rooms', path: '/room-board' }
 const RESIDENTS: NavItem = { label: 'Residents', path: '/residents' }
 const FEES: NavItem = { label: 'Fees', path: '/fees' }
@@ -16,7 +15,7 @@ const SITE_CONTENT: NavItem = { label: 'Site Content', path: '/site-content' }
 export function getNavItemsForRole(role: Role): NavItem[] {
   switch (role) {
     case 'owner':
-      return [DASHBOARD, ROOMS, RESIDENTS, FEES, REQUESTS, FINANCIAL_SETTINGS, SITE_CONTENT]
+      return [DASHBOARD, ROOMS, RESIDENTS, FEES, REQUESTS, SITE_CONTENT]
     case 'warden':
       return [DASHBOARD, ROOMS, RESIDENTS, FEES, REQUESTS]
     case 'student':

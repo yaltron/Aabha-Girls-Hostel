@@ -3,6 +3,18 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { submitInquiry, submitBooking, fetchPublicSiteContent } from '../lib/publicSite'
 import { PublicShell } from '../components/public/PublicShell'
 
+// Supabase throws plain objects (PostgrestError), not Error instances, so
+// `err instanceof Error` is always false for them - falling through to the
+// generic fallback and hiding the real message. This reads .message off
+// whatever shape the error actually is.
+function errorMessage(err: unknown, fallback: string): string {
+  if (err instanceof Error) return err.message
+  if (err && typeof err === 'object' && 'message' in err && typeof (err as { message: unknown }).message === 'string') {
+    return (err as { message: string }).message
+  }
+  return fallback
+}
+
 function BookingPage() {
   const [content, setContent] = useState<Record<string, unknown>>({})
 
@@ -37,7 +49,7 @@ function BookingPage() {
       await submitInquiry({ name: inquiryName, phone: inquiryPhone, message: inquiryMessage || undefined })
       setInquirySent(true)
     } catch (err) {
-      setInquiryError(err instanceof Error ? err.message : 'Could not send inquiry')
+      setInquiryError(errorMessage(err, 'Could not send inquiry'))
     }
   }
 
@@ -58,7 +70,7 @@ function BookingPage() {
       })
       setBookingSent(true)
     } catch (err) {
-      setBookingError(err instanceof Error ? err.message : 'Could not send reservation request')
+      setBookingError(errorMessage(err, 'Could not send reservation request'))
     }
   }
 
