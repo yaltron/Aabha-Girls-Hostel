@@ -13,6 +13,7 @@ const mockUpdate = {
 }
 
 const upsertMock = vi.fn(() => Promise.resolve({ error: null }))
+const rpcMock = vi.fn(() => Promise.resolve({ error: null }))
 
 vi.mock('./supabase', () => ({
   supabase: {
@@ -46,6 +47,7 @@ vi.mock('./supabase', () => ({
         upsert: upsertMock,
       }
     }),
+    rpc: rpcMock,
   },
 }))
 
@@ -89,5 +91,27 @@ describe('postGuardianUpdate', () => {
       expect.objectContaining({ student_id: 'student-1', message: 'Doing great!' }),
       { onConflict: 'student_id,month' },
     )
+  })
+})
+
+describe('payGuardianInvoice', () => {
+  it('calls the record_guardian_payment RPC with the given invoice, method, and reference', async () => {
+    const { payGuardianInvoice } = await import('./guardian')
+    await payGuardianInvoice('inv-1', 'esewa', 'TXN123')
+    expect(rpcMock).toHaveBeenCalledWith('record_guardian_payment', {
+      p_invoice_id: 'inv-1',
+      p_method: 'esewa',
+      p_reference: 'TXN123',
+    })
+  })
+
+  it('sends null reference when omitted', async () => {
+    const { payGuardianInvoice } = await import('./guardian')
+    await payGuardianInvoice('inv-1', 'cash')
+    expect(rpcMock).toHaveBeenCalledWith('record_guardian_payment', {
+      p_invoice_id: 'inv-1',
+      p_method: 'cash',
+      p_reference: null,
+    })
   })
 })

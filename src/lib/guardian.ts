@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { InvoiceStatus } from './fees'
+import type { InvoiceStatus, PaymentMethod } from './fees'
 
 export type ChildInvoice = {
   id: string
@@ -66,5 +66,14 @@ export async function postGuardianUpdate(studentId: string, message: string): Pr
   const { error } = await supabase
     .from('guardian_updates')
     .upsert({ student_id: studentId, month: currentMonthDate(), message }, { onConflict: 'student_id,month' })
+  if (error) throw error
+}
+
+export async function payGuardianInvoice(invoiceId: string, method: PaymentMethod, reference?: string): Promise<void> {
+  const { error } = await supabase.rpc('record_guardian_payment', {
+    p_invoice_id: invoiceId,
+    p_method: method,
+    p_reference: reference ?? null,
+  })
   if (error) throw error
 }
