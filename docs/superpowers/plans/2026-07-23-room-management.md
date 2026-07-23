@@ -363,9 +363,22 @@ grant execute on function public.delete_room(uuid) to authenticated;
 -- were dropped, since it depended on those columns) is recreated here,
 -- now that room_type_id/room_types exist for it to read. create view,
 -- not create or replace, since the view no longer exists at this point.
+--
+-- lower(rt.name), not rt.name: found during final review. room_types.name
+-- is capitalized (e.g. 'Single') for the admin UI's display, but the
+-- public marketing site's existing consumers (src/routes/rooms.tsx,
+-- src/routes/index.tsx - ROOM_FEATURES/ROOM_BADGES lookup tables and the
+-- room_${room_type} media-category matching) are all hardcoded to the
+-- original lowercase enum values ('single'/'twin'/'triple') and were
+-- never touched by this migration. Without lower(), every one of those
+-- lookups would silently return undefined the moment this migration
+-- runs - room features, badges, and photos would all disappear from the
+-- live public rooms page. lower() keeps the public output byte-for-byte
+-- identical to what public_room_availability produced before this
+-- migration, for every room type that existed before it ran.
 create view public.public_room_availability as
   select
-    rt.name as room_type,
+    lower(rt.name) as room_type,
     rt.base_rent as monthly_price,
     count(*) filter (
       where b.status = 'vacant'

@@ -373,10 +373,21 @@ column". Must be `drop view` + `create view`, with `grant select` to
 
 ```sql
 drop view public.public_room_availability;
+```
 
+**Update from final review:** `room_types.name` is capitalized for the
+admin UI (`'Single'`), but the public marketing site's existing
+`ROOM_FEATURES`/`ROOM_BADGES` lookups and `room_${room_type}` media
+category matching (`src/routes/rooms.tsx`, `src/routes/index.tsx`) are
+hardcoded to the original lowercase enum values and were never part of
+this plan's scope. `lower(rt.name)` in the view keeps the public output
+identical to what it was before this migration, for every pre-existing
+room type.
+
+```sql
 create view public.public_room_availability as
   select
-    rt.name as room_type,
+    lower(rt.name) as room_type,
     rt.base_rent as monthly_price,
     count(*) filter (
       where b.status = 'vacant'

@@ -40,8 +40,13 @@ function SiteContentPage() {
   }, [])
 
   function vacantBedsByType(roomType: Booking['room_type']): Bed[] {
+    // bookings.room_type is deliberately still the bare room_type enum
+    // (lowercase: single/twin/triple) - out of scope for the room_types
+    // split. rooms.room_type_name now comes from room_types.name, which
+    // the split migration capitalizes (initcap) for the pre-existing
+    // types, so this comparison must be case-insensitive rather than exact.
     return rooms
-      .filter((r) => r.room_type === roomType)
+      .filter((r) => r.room_type_name.toLowerCase() === roomType)
       .flatMap((r) => r.beds)
       .filter((b) => b.status === 'vacant')
   }
