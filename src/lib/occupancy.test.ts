@@ -4,8 +4,8 @@ import type { Room } from './rooms'
 
 function room(beds: Array<{ status: Room['beds'][number]['status'] }>): Room {
   return {
-    id: 'r', room_number: '1', room_type: 'twin', capacity: beds.length, monthly_price: 0,
-    beds: beds.map((b, i) => ({ id: `b${i}`, room_id: 'r', bed_label: String(i), status: b.status })),
+    id: 'r', room_number: '1', room_type_name: 'Twin',
+    beds: beds.map((b, i) => ({ id: `b${i}`, room_id: 'r', bed_label: String(i), status: b.status, hold_until: null })),
   }
 }
 
