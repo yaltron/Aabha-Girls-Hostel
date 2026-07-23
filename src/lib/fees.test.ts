@@ -12,16 +12,31 @@ const mockInvoicesRawData = [
   },
 ]
 
+const mockFeeHeadsData = [{ id: 'fh-1', name: 'Rent', is_recurring: true }]
+
 const rpcMock = vi.fn(() => Promise.resolve({ error: null }))
 
-vi.mock('./supabase', () => ({
-  supabase: {
-    from: vi.fn(() => ({
+const fromMock = vi.fn((table: string) => {
+  if (table === 'invoices') {
+    return {
       select: vi.fn(() => ({
         eq: vi.fn(() => Promise.resolve({ data: mockInvoicesRawData, error: null })),
       })),
-    })),
-    rpc: rpcMock,
+    }
+  }
+  if (table === 'fee_heads') {
+    return {
+      select: vi.fn(() => ({ order: vi.fn(() => Promise.resolve({ data: mockFeeHeadsData, error: null })) })),
+      insert: vi.fn(() => Promise.resolve({ error: null })),
+    }
+  }
+  throw new Error(`unexpected table: ${table}`)
+})
+
+vi.mock('./supabase', () => ({
+  supabase: {
+    from: (table: string) => fromMock(table),
+    rpc: (...args: unknown[]) => rpcMock(...args),
   },
 }))
 
@@ -60,6 +75,46 @@ describe('recordPayment', () => {
       p_amount: 14000,
       p_method: 'cash',
       p_reference: null,
+    })
+  })
+})
+
+describe('fetchFeeHeads', () => {
+  it('returns all fee heads', async () => {
+    const { fetchFeeHeads } = await import('./fees')
+    const feeHeads = await fetchFeeHeads()
+    expect(feeHeads).toEqual(mockFeeHeadsData)
+  })
+})
+
+describe('createFeeHead', () => {
+  it('inserts a fee head with the given name and recurring flag', async () => {
+    const { createFeeHead } = await import('./fees')
+    await createFeeHead('Mess Charge', false)
+    expect(fromMock).toHaveBeenCalledWith('fee_heads')
+  })
+})
+
+describe('addInvoiceItem', () => {
+  it('calls the add_invoice_item RPC with the given fields', async () => {
+    const { addInvoiceItem } = await import('./fees')
+    await addInvoiceItem('invoice-1', 'fh-1', 500, 'Extra mess charge')
+    expect(rpcMock).toHaveBeenCalledWith('add_invoice_item', {
+      p_invoice_id: 'invoice-1',
+      p_fee_head_id: 'fh-1',
+      p_amount: 500,
+      p_description: 'Extra mess charge',
+    })
+  })
+
+  it('sends null description when omitted', async () => {
+    const { addInvoiceItem } = await import('./fees')
+    await addInvoiceItem('invoice-1', 'fh-1', 500)
+    expect(rpcMock).toHaveBeenCalledWith('add_invoice_item', {
+      p_invoice_id: 'invoice-1',
+      p_fee_head_id: 'fh-1',
+      p_amount: 500,
+      p_description: null,
     })
   })
 })

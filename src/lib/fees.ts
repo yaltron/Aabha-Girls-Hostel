@@ -49,3 +49,30 @@ export async function recordPayment(input: {
   })
   if (error) throw error
 }
+
+export type FeeHead = {
+  id: string
+  name: string
+  is_recurring: boolean
+}
+
+export async function fetchFeeHeads(): Promise<FeeHead[]> {
+  const { data, error } = await supabase.from('fee_heads').select('*').order('name')
+  if (error) throw error
+  return (data ?? []) as FeeHead[]
+}
+
+export async function createFeeHead(name: string, isRecurring: boolean): Promise<void> {
+  const { error } = await supabase.from('fee_heads').insert({ name, is_recurring: isRecurring })
+  if (error) throw error
+}
+
+export async function addInvoiceItem(invoiceId: string, feeHeadId: string, amount: number, description?: string): Promise<void> {
+  const { error } = await supabase.rpc('add_invoice_item', {
+    p_invoice_id: invoiceId,
+    p_fee_head_id: feeHeadId,
+    p_amount: amount,
+    p_description: description ?? null,
+  })
+  if (error) throw error
+}
