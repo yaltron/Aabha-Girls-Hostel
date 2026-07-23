@@ -30,6 +30,7 @@ const mockUnlinkedGuardiansData = [
 const rpcMock = vi.fn(() => Promise.resolve({ error: null }))
 const updateEqMock = vi.fn(() => Promise.resolve({ error: null }))
 const updateMock = vi.fn(() => ({ eq: updateEqMock }))
+const invokeMock = vi.fn(() => Promise.resolve({ data: { profileId: 'new-profile-1', password: 'Ab3xY9kLmP2q' }, error: null }))
 
 vi.mock('./supabase', () => ({
   supabase: {
@@ -50,6 +51,7 @@ vi.mock('./supabase', () => ({
       update: updateMock,
     })),
     rpc: rpcMock,
+    functions: { invoke: invokeMock },
   },
 }))
 
@@ -87,6 +89,23 @@ describe('linkGuardian', () => {
     await linkGuardian('student-1', 'guardian-1')
     expect(updateMock).toHaveBeenCalledWith({ guardian_id: 'guardian-1' })
     expect(updateEqMock).toHaveBeenCalledWith('id', 'student-1')
+  })
+})
+
+describe('enrollStudent', () => {
+  it('invokes the enroll-student function and returns the profile id and password', async () => {
+    const { enrollStudent } = await import('./students')
+    const result = await enrollStudent('Priya Sharma', '9800000005')
+    expect(invokeMock).toHaveBeenCalledWith('enroll-student', {
+      body: { fullName: 'Priya Sharma', phone: '9800000005' },
+    })
+    expect(result).toEqual({ profileId: 'new-profile-1', password: 'Ab3xY9kLmP2q' })
+  })
+
+  it('throws when the function returns an error', async () => {
+    invokeMock.mockResolvedValueOnce({ data: null, error: new Error('Only owner or warden can enroll a student') })
+    const { enrollStudent } = await import('./students')
+    await expect(enrollStudent('Priya Sharma', '9800000005')).rejects.toThrow('Only owner or warden can enroll a student')
   })
 })
 

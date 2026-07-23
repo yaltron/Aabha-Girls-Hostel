@@ -82,3 +82,11 @@ export async function linkGuardian(studentId: string, guardianProfileId: string)
     .eq('id', studentId)
   if (error) throw error
 }
+
+export async function enrollStudent(fullName: string, phone: string): Promise<{ profileId: string; password: string }> {
+  const { data, error } = await supabase.functions.invoke('enroll-student', {
+    body: { fullName, phone },
+  })
+  if (error) throw error
+  return data as { profileId: string; password: string }
+}
