@@ -1,7 +1,7 @@
 import type { Invoice } from '../../lib/fees'
 import { isOverdue } from '../../lib/dues'
 
-export function FeeStatus({ invoices }: { invoices: Invoice[] }) {
+export function FeeStatus({ invoices, onPay }: { invoices: Invoice[]; onPay?: (invoice: Invoice) => void }) {
   const today = new Date()
 
   return (
@@ -13,6 +13,7 @@ export function FeeStatus({ invoices }: { invoices: Invoice[] }) {
             <th className="px-8 py-4">Amount</th>
             <th className="px-8 py-4">Due Date</th>
             <th className="px-8 py-4">Status</th>
+            {onPay && <th className="px-8 py-4">Action</th>}
           </tr>
         </thead>
         <tbody className="divide-y divide-outline-variant/10">
@@ -36,6 +37,15 @@ export function FeeStatus({ invoices }: { invoices: Invoice[] }) {
                   </span>
                 )}
               </td>
+              {onPay && (
+                <td className="px-8 py-5">
+                  {invoice.status === 'unpaid' && (
+                    <button onClick={() => onPay(invoice)} className="text-primary font-medium hover:underline">
+                      Pay Now
+                    </button>
+                  )}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
