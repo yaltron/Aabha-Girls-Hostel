@@ -49,6 +49,14 @@ where rt.name = initcap(r.room_type::text);
 
 alter table public.rooms alter column room_type_id set not null;
 
+-- public_room_availability (0018) still depends on rooms.room_type and
+-- rooms.monthly_price at this point in the script - Postgres refuses to
+-- drop a column a view depends on ("cannot drop column ... because
+-- other objects depend on it"), so the view must be dropped before
+-- these columns, not just recreated later. Its replacement is created
+-- further down, once room_type_id/room_types exist for it to read.
+drop view public.public_room_availability;
+
 alter table public.rooms drop column room_type;
 alter table public.rooms drop column capacity;
 alter table public.rooms drop column monthly_price;
@@ -195,6 +203,67 @@ begin
 end;
 $$;
 
+-- approve_transfer_request (0012) is a second reader of the
+-- now-dropped rooms.monthly_price, missed in the plan's first pass -
+-- generate_monthly_invoices was updated above but this one wasn't,
+-- which would leave the transfer-approval feature raising "column
+-- r.monthly_price does not exist" on every call post-migration.
+-- Signature is unchanged from 0012 (p_request_id uuid, p_to_bed_id uuid),
+-- so create or replace is safe here - no overload/grant-loss risk.
+create or replace function public.approve_transfer_request(p_request_id uuid, p_to_bed_id uuid)
+returns void
+language plpgsql
+as $$
+declare
+  v_from_bed_id uuid;
+  v_old_room_price numeric;
+  v_new_room_price numeric;
+  v_diff numeric;
+  v_student_id uuid;
+begin
+  select from_bed_id, student_id into v_from_bed_id, v_student_id
+  from public.transfer_requests where id = p_request_id and status = 'pending';
+
+  if not found then
+    raise exception 'Transfer request % is not pending', p_request_id;
+  end if;
+
+  select rt.base_rent into v_old_room_price
+  from public.beds b
+  join public.rooms r on r.id = b.room_id
+  join public.room_types rt on rt.id = r.room_type_id
+  where b.id = v_from_bed_id;
+
+  select rt.base_rent into v_new_room_price
+  from public.beds b
+  join public.rooms r on r.id = b.room_id
+  join public.room_types rt on rt.id = r.room_type_id
+  where b.id = p_to_bed_id;
+
+  v_diff := v_new_room_price - v_old_room_price;
+
+  if v_diff = 0 then
+    if (select status from public.beds where id = p_to_bed_id for update) <> 'vacant' then
+      raise exception 'Bed % is not vacant', p_to_bed_id;
+    end if;
+
+    update public.beds set status = 'vacant' where id = v_from_bed_id;
+    update public.beds set status = 'occupied' where id = p_to_bed_id;
+    update public.students set bed_id = p_to_bed_id where id = v_student_id;
+
+    update public.transfer_requests
+    set status = 'confirmed', to_bed_id = p_to_bed_id, price_diff = 0,
+        reviewed_by = auth.uid(), reviewed_at = now(), confirmed_at = now()
+    where id = p_request_id;
+  else
+    update public.transfer_requests
+    set status = 'awaiting_confirmation', to_bed_id = p_to_bed_id, price_diff = v_diff,
+        reviewed_by = auth.uid(), reviewed_at = now()
+    where id = p_request_id;
+  end if;
+end;
+$$;
+
 create function public.delete_room(p_room_id uuid)
 returns void
 language plpgsql
@@ -214,14 +283,22 @@ begin
 end;
 $$;
 
--- create or replace view cannot change an existing column's data type,
--- and room_type here changes from the room_type enum to text (rt.name) -
--- Postgres would reject "create or replace" with "cannot change data
--- type of view column room_type from room_type to text". Drop and
--- recreate instead, and re-grant to anon since dropping a view drops
--- its existing grants along with it.
-drop view public.public_room_availability;
+-- Not security definer - the inner delete is gated by the caller's own
+-- RLS write access to rooms (owner-only), same as every other invoker
+-- function in this file. The explicit revoke/grant below is still
+-- needed (a newly created function defaults to PUBLIC execute), and
+-- matters here specifically because a warden calling this without it
+-- would hit a silent 0-row delete under RLS (apparent success) rather
+-- than a clean permission denial - restricting execute to authenticated
+-- doesn't fix that by itself, but keeps this function's grant posture
+-- consistent with every sibling RPC in this file.
+revoke execute on function public.delete_room(uuid) from public;
+grant execute on function public.delete_room(uuid) to authenticated;
 
+-- The view already dropped earlier (before rooms.room_type/monthly_price
+-- were dropped, since it depended on those columns) is recreated here,
+-- now that room_type_id/room_types exist for it to read. create view,
+-- not create or replace, since the view no longer exists at this point.
 create view public.public_room_availability as
   select
     rt.name as room_type,
