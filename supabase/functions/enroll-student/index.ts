@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
 
   if (createError || !created.user) {
     const isDuplicate = createError?.message?.toLowerCase().includes('already been registered')
-    return jsonResponse({ error: isDuplicate ? 'A student with this phone number is already enrolled' : createError?.message ?? 'Could not create account' }, isDuplicate ? 409 : 400)
+    return jsonResponse({ error: isDuplicate ? 'A student with this phone number is already enrolled' : 'Could not create account' }, isDuplicate ? 409 : 400)
   }
 
   return jsonResponse({ profileId: created.user.id, password }, 200)
