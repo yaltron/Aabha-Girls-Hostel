@@ -358,8 +358,16 @@ vacant inline, so an anonymous website visitor never sees a stale
 "unavailable" count purely because no authenticated action has run
 `release_expired_bed_holds()` yet.
 
+`create or replace view` cannot change an existing column's data type,
+and `room_type` changes from the `room_type` enum to `text` (`rt.name`)
+here - Postgres rejects that with "cannot change data type of view
+column". Must be `drop view` + `create view`, with `grant select` to
+`anon` reapplied afterward since dropping a view drops its grants too.
+
 ```sql
-create or replace view public.public_room_availability as
+drop view public.public_room_availability;
+
+create view public.public_room_availability as
   select
     rt.name as room_type,
     rt.base_rent as monthly_price,
@@ -372,6 +380,8 @@ create or replace view public.public_room_availability as
   join public.room_types rt on rt.id = r.room_type_id
   where r.admin_status = 'active'
   group by rt.name, rt.base_rent;
+
+grant select on public.public_room_availability to anon;
 ```
 
 The `where r.admin_status = 'active'` clause is new and required: a room

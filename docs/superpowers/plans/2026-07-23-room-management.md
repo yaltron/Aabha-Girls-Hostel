@@ -167,7 +167,17 @@ $$;
 revoke execute on function public.release_expired_bed_holds() from public;
 grant execute on function public.release_expired_bed_holds() to authenticated;
 
-create or replace function public.approve_booking(p_booking_id uuid, p_bed_id uuid, p_hold_hours int default 48)
+-- The existing 2-arg approve_booking(uuid, uuid) is being replaced by a
+-- 3-arg version - Postgres identifies functions by name + parameter type
+-- list, so `create or replace function` with a different arity creates a
+-- SECOND, separate overload rather than replacing the original; the old
+-- function must be dropped explicitly first, or both the old (hold-
+-- unaware) function stays live AND a 2-argument call to approve_booking
+-- becomes ambiguous between the two overloads (Postgres raises "function
+-- approve_booking(uuid, uuid) is not unique").
+drop function public.approve_booking(uuid, uuid);
+
+create function public.approve_booking(p_booking_id uuid, p_bed_id uuid, p_hold_hours int default 48)
 returns void
 language plpgsql
 as $$
@@ -189,6 +199,14 @@ begin
   end if;
 end;
 $$;
+
+-- A newly created function defaults to PUBLIC execute in Postgres unless
+-- explicitly revoked - dropping the old function also drops its revoke/
+-- grant pair, so this must be re-declared for the new one, or
+-- approve_booking silently becomes callable by anon/every role instead
+-- of staying restricted to authenticated staff.
+revoke execute on function public.approve_booking(uuid, uuid, int) from public;
+grant execute on function public.approve_booking(uuid, uuid, int) to authenticated;
 
 create or replace function public.check_in_student(
   p_profile_id uuid,
@@ -260,7 +278,15 @@ begin
 end;
 $$;
 
-create or replace view public.public_room_availability as
+-- create or replace view cannot change an existing column's data type,
+-- and room_type here changes from the room_type enum to text (rt.name) -
+-- Postgres would reject "create or replace" with "cannot change data
+-- type of view column room_type from room_type to text". Drop and
+-- recreate instead, and re-grant to anon since dropping a view drops
+-- its existing grants along with it.
+drop view public.public_room_availability;
+
+create view public.public_room_availability as
   select
     rt.name as room_type,
     rt.base_rent as monthly_price,
@@ -273,11 +299,13 @@ create or replace view public.public_room_availability as
   join public.room_types rt on rt.id = r.room_type_id
   where r.admin_status = 'active'
   group by rt.name, rt.base_rent;
+
+grant select on public.public_room_availability to anon;
 ```
 
 - [ ] **Step 2: Self-review the migration against the plan's Global Constraints**
 
-Confirm: no `drop table`/`create table ... as` on `rooms`, `beds`, or `students` anywhere in the file (only `alter table`); `generate_monthly_invoices` and `approve_booking`'s pricing paths read `room_types.base_rent`, never a dropped `rooms.monthly_price`; `transfer_requests`/`bookings` are untouched; `public_room_availability` filters `admin_status = 'active'` and treats an expired hold as vacant inline; `delete_room` blocks on `occupied`/`reserved`/`notice_given`, not just `occupied`.
+Confirm: no `drop table`/`create table ... as` on `rooms`, `beds`, or `students` anywhere in the file (only `alter table`); `generate_monthly_invoices` and `approve_booking`'s pricing paths read `room_types.base_rent`, never a dropped `rooms.monthly_price`; `transfer_requests`/`bookings` are untouched; `public_room_availability` is `drop view` + `create view` (not `create or replace`, since the `room_type` column's type changes from the enum to `text`) followed by a fresh `grant select ... to anon`, and filters `admin_status = 'active'` while treating an expired hold as vacant inline; `approve_booking`'s old 2-arg overload is explicitly `drop function`-ed before the new 3-arg version is created, with its own explicit `revoke`/`grant` pair (a new function defaults to PUBLIC execute otherwise); `delete_room` blocks on `occupied`/`reserved`/`notice_given`, not just `occupied`.
 
 - [ ] **Step 3: Apply the migration**
 
