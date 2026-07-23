@@ -678,6 +678,7 @@ describe('AddChargeForm', () => {
     addInvoiceItem.mockRejectedValueOnce(new Error('Invoice invoice-1 is not unpaid'))
     render(<AddChargeForm invoiceId="invoice-1" feeHeads={feeHeads} onAdded={vi.fn()} />)
 
+    fireEvent.change(screen.getByLabelText(/amount/i), { target: { value: '500' } })
     fireEvent.click(screen.getByRole('button', { name: /add charge/i }))
 
     await waitFor(() => expect(screen.getByText('Invoice invoice-1 is not unpaid')).toBeInTheDocument())
