@@ -22,7 +22,7 @@ export function BedBoard({ rooms }: { rooms: Room[] }) {
         <div key={room.id} className="bg-surface-container-lowest rounded-xxl shadow-premium p-6 space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="font-display text-lg text-primary">{room.room_number}</h3>
-            <span className="text-xs uppercase tracking-wider text-secondary">{room.room_type}</span>
+            <span className="text-xs uppercase tracking-wider text-secondary">{room.room_type_name}</span>
           </div>
           <div className="flex gap-2 flex-wrap">
             {room.beds.map((bed) => (

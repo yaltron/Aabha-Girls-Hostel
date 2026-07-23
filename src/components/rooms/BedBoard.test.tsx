@@ -7,20 +7,19 @@ const rooms: Room[] = [
   {
     id: 'room-1',
     room_number: '101',
-    room_type: 'twin',
-    capacity: 2,
-    monthly_price: 14000,
+    room_type_name: 'Twin',
     beds: [
-      { id: 'bed-1', room_id: 'room-1', bed_label: 'A', status: 'vacant' },
-      { id: 'bed-2', room_id: 'room-1', bed_label: 'B', status: 'occupied' },
+      { id: 'bed-1', room_id: 'room-1', bed_label: 'A', status: 'vacant', hold_until: null },
+      { id: 'bed-2', room_id: 'room-1', bed_label: 'B', status: 'occupied', hold_until: null },
     ],
   },
 ]
 
 describe('BedBoard', () => {
-  it('renders every room number and bed label', () => {
+  it('renders every room number, room type, and bed label', () => {
     render(<BedBoard rooms={rooms} />)
     expect(screen.getByText('101')).toBeInTheDocument()
+    expect(screen.getByText('Twin')).toBeInTheDocument()
     expect(screen.getByText('A')).toBeInTheDocument()
     expect(screen.getByText('B')).toBeInTheDocument()
   })
