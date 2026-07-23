@@ -27,4 +27,17 @@ describe('DuesTable', () => {
     fireEvent.click(screen.getAllByRole('button', { name: /record payment/i })[0])
     expect(onSelectInvoice).toHaveBeenCalledWith(invoices[0])
   })
+
+  it('does not render an Add Charge action when onAddCharge is omitted', () => {
+    render(<DuesTable invoices={invoices} onSelectInvoice={vi.fn()} />)
+    expect(screen.queryByRole('button', { name: /add charge/i })).not.toBeInTheDocument()
+  })
+
+  it('renders an Add Charge action when onAddCharge is provided, and calls it with the invoice', () => {
+    const onAddCharge = vi.fn()
+    render(<DuesTable invoices={invoices} onSelectInvoice={vi.fn()} onAddCharge={onAddCharge} />)
+
+    fireEvent.click(screen.getAllByRole('button', { name: /add charge/i })[0])
+    expect(onAddCharge).toHaveBeenCalledWith(invoices[0])
+  })
 })

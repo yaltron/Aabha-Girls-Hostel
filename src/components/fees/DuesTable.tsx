@@ -4,9 +4,11 @@ import { isOverdue } from '../../lib/dues'
 export function DuesTable({
   invoices,
   onSelectInvoice,
+  onAddCharge,
 }: {
   invoices: Invoice[]
   onSelectInvoice: (invoice: Invoice) => void
+  onAddCharge?: (invoice: Invoice) => void
 }) {
   const today = new Date()
 
@@ -35,13 +37,21 @@ export function DuesTable({
                   </span>
                 )}
               </td>
-              <td className="px-8 py-5">
+              <td className="px-8 py-5 space-x-4">
                 <button
                   onClick={() => onSelectInvoice(invoice)}
                   className="text-primary font-medium hover:underline"
                 >
                   Record Payment
                 </button>
+                {onAddCharge && (
+                  <button
+                    onClick={() => onAddCharge(invoice)}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Add Charge
+                  </button>
+                )}
               </td>
             </tr>
           ))}
