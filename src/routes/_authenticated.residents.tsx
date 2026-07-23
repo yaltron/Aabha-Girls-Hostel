@@ -15,6 +15,7 @@ import { ResidentList } from '../components/students/ResidentList'
 import { CheckInForm } from '../components/students/CheckInForm'
 import { LinkGuardianForm } from '../components/students/LinkGuardianForm'
 import { PostUpdateForm } from '../components/students/PostUpdateForm'
+import { EnrollStudentForm } from '../components/students/EnrollStudentForm'
 
 function ResidentsPage() {
   const [students, setStudents] = useState<Student[]>([])
@@ -44,6 +45,11 @@ function ResidentsPage() {
   function handleCheckedIn() {
     setSelectedProfileId('')
     refetchAll()
+  }
+
+  function handleEnrolled(profileId: string) {
+    refetchAll()
+    setSelectedProfileId(profileId)
   }
 
   function handleLinkGuardianClick(student: Student) {
@@ -82,30 +88,38 @@ function ResidentsPage() {
 
       <div className="bg-surface-container-lowest rounded-xxl shadow-premium p-8 space-y-6">
         <h3 className="font-display text-lg text-on-surface">Check In a Student</h3>
-        {unassignedProfiles.length === 0 ? (
-          <p className="text-on-surface-variant text-sm">
-            No pending student accounts to check in - create one via the Supabase dashboard first
-          </p>
-        ) : (
-          <div className="space-y-2">
-            <label htmlFor="unassignedProfile" className="block text-sm font-medium text-on-surface-variant">
-              Student Account
-            </label>
-            <select
-              id="unassignedProfile"
-              value={selectedProfileId}
-              onChange={(e) => setSelectedProfileId(e.target.value)}
-              className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3"
-            >
-              <option value="">Select a student...</option>
-              {unassignedProfiles.map((profile) => (
-                <option key={profile.id} value={profile.id}>
-                  {profile.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-on-surface-variant">New student - create their account</p>
+          <EnrollStudentForm onEnrolled={handleEnrolled} />
+        </div>
+
+        <div className="pt-2 border-t border-outline-variant space-y-2">
+          <p className="text-sm font-medium text-on-surface-variant">Or pick an existing pending account</p>
+          {unassignedProfiles.length === 0 ? (
+            <p className="text-on-surface-variant text-sm">No pending student accounts.</p>
+          ) : (
+            <div className="space-y-2">
+              <label htmlFor="unassignedProfile" className="block text-sm font-medium text-on-surface-variant">
+                Student Account
+              </label>
+              <select
+                id="unassignedProfile"
+                value={selectedProfileId}
+                onChange={(e) => setSelectedProfileId(e.target.value)}
+                className="w-full bg-surface border border-outline-variant rounded-lg px-4 py-3"
+              >
+                <option value="">Select a student...</option>
+                {unassignedProfiles.map((profile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+
         {selectedProfileId && vacantBeds.length > 0 && (
           <CheckInForm vacantBeds={vacantBeds} profileId={selectedProfileId} onCheckedIn={handleCheckedIn} reservedNames={reservedNames} />
         )}
