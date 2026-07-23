@@ -40,6 +40,24 @@ describe('EnrollStudentForm', () => {
     expect(onEnrolled).not.toHaveBeenCalled()
   })
 
+  it('resets to a blank form when "Enroll another student" is clicked after a successful enrollment', async () => {
+    enrollStudent.mockResolvedValueOnce({ profileId: 'new-profile-1', password: 'Ab3xY9kLmP2q' })
+    const onEnrolled = vi.fn()
+    render(<EnrollStudentForm onEnrolled={onEnrolled} />)
+
+    fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'Priya Sharma' } })
+    fireEvent.change(screen.getByLabelText(/phone/i), { target: { value: '9800000005' } })
+    fireEvent.click(screen.getByRole('button', { name: /enroll/i }))
+
+    await waitFor(() => expect(screen.getByText('Ab3xY9kLmP2q')).toBeInTheDocument())
+
+    fireEvent.click(screen.getByRole('button', { name: /enroll another student/i }))
+
+    expect(screen.queryByText('Ab3xY9kLmP2q')).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/full name/i)).toHaveValue('')
+    expect(screen.getByLabelText(/phone/i)).toHaveValue('')
+  })
+
   it('shows a validation error and does not call enrollStudent when fields are left empty', async () => {
     const onEnrolled = vi.fn()
     render(<EnrollStudentForm onEnrolled={onEnrolled} />)

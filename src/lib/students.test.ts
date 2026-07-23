@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
+import { FunctionsHttpError } from '@supabase/supabase-js'
 
 // Raw shape as Supabase actually returns it for
 // `select('*, profiles!students_id_fkey(full_name)')`: the joined table
@@ -102,8 +103,15 @@ describe('enrollStudent', () => {
     expect(result).toEqual({ profileId: 'new-profile-1', password: 'Ab3xY9kLmP2q' })
   })
 
-  it('throws when the function returns an error', async () => {
-    invokeMock.mockResolvedValueOnce({ data: null, error: new Error('Only owner or warden can enroll a student') })
+  it('throws with the real server-provided error message when the function returns a non-2xx response', async () => {
+    // This mirrors how supabase-js ACTUALLY surfaces HTTP errors from
+    // `functions.invoke`: `error.message` is a fixed generic string, and the
+    // real server-provided message lives in the response body under
+    // `error.context`, which must be read and JSON-parsed.
+    const response = new Response(JSON.stringify({ error: 'Only owner or warden can enroll a student' }), {
+      status: 403,
+    })
+    invokeMock.mockResolvedValueOnce({ data: null, error: new FunctionsHttpError(response) })
     const { enrollStudent } = await import('./students')
     await expect(enrollStudent('Priya Sharma', '9800000005')).rejects.toThrow('Only owner or warden can enroll a student')
   })

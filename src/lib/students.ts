@@ -1,3 +1,4 @@
+import { FunctionsHttpError } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 
 export type Student = {
@@ -87,6 +88,12 @@ export async function enrollStudent(fullName: string, phone: string): Promise<{ 
   const { data, error } = await supabase.functions.invoke('enroll-student', {
     body: { fullName, phone },
   })
-  if (error) throw error
+  if (error) {
+    if (error instanceof FunctionsHttpError) {
+      const body = await error.context.json().catch(() => null)
+      throw new Error(body?.error ?? error.message)
+    }
+    throw error
+  }
   return data as { profileId: string; password: string }
 }

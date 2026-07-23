@@ -27,12 +27,26 @@ export function EnrollStudentForm({ onEnrolled }: { onEnrolled: (profileId: stri
     }
   }
 
+  function handleEnrollAnother() {
+    setFullName('')
+    setPhone('')
+    setError(null)
+    setGeneratedPassword(null)
+  }
+
   if (generatedPassword) {
     return (
       <div className="bg-secondary-container rounded-xxl p-6 space-y-2">
         <p className="font-medium text-secondary">Account created for {fullName}</p>
         <p className="text-sm text-on-surface-variant">Write this down and give it to the student now - it will not be shown again.</p>
         <p className="font-display text-lg text-on-surface">{generatedPassword}</p>
+        <button
+          type="button"
+          onClick={handleEnrollAnother}
+          className="w-full bg-primary text-on-primary py-4 rounded-full font-medium active:scale-95 transition-transform"
+        >
+          Enroll another student
+        </button>
       </div>
     )
   }
