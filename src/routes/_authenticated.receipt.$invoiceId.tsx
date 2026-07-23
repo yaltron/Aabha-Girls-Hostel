@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 type ReceiptData = {
+  receiptNo: number
   studentName: string
   billingMonth: string
   amount: number
@@ -21,7 +22,7 @@ async function fetchReceipt(invoiceId: string): Promise<ReceiptData | null> {
 
   const { data: payment, error: paymentError } = await supabase
     .from('payments')
-    .select('method, reference, paid_at')
+    .select('receipt_no, method, reference, paid_at')
     .eq('invoice_id', invoiceId)
     .order('paid_at', { ascending: false })
     .limit(1)
@@ -31,6 +32,7 @@ async function fetchReceipt(invoiceId: string): Promise<ReceiptData | null> {
 
   const row = invoice as any
   return {
+    receiptNo: payment.receipt_no,
     studentName: row.students?.profiles?.full_name ?? '',
     billingMonth: row.billing_month,
     amount: row.amount,
@@ -54,6 +56,7 @@ function ReceiptPage() {
     <div className="max-w-lg mx-auto bg-surface-container-lowest rounded-xxl shadow-premium p-8 space-y-6">
       <h2 className="font-display text-2xl text-primary">Payment Receipt</h2>
       <div className="space-y-2 text-on-surface">
+        <p><span className="text-on-surface-variant">Receipt No:</span> {receipt.receiptNo}</p>
         <p><span className="text-on-surface-variant">Student:</span> {receipt.studentName}</p>
         <p><span className="text-on-surface-variant">Billing Month:</span> {receipt.billingMonth}</p>
         <p><span className="text-on-surface-variant">Amount:</span> {receipt.amount}</p>
