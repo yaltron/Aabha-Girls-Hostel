@@ -10,8 +10,16 @@ export function EnrollStudentForm({ onEnrolled }: { onEnrolled: (profileId: stri
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
+
+    const trimmedFullName = fullName.trim()
+    const trimmedPhone = phone.trim()
+    if (!trimmedFullName || !trimmedPhone) {
+      setError('Full name and phone are required')
+      return
+    }
+
     try {
-      const result = await enrollStudent(fullName, phone)
+      const result = await enrollStudent(trimmedFullName, trimmedPhone)
       setGeneratedPassword(result.password)
       onEnrolled(result.profileId)
     } catch (err) {

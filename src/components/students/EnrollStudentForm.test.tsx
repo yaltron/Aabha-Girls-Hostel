@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { EnrollStudentForm } from './EnrollStudentForm'
 
@@ -9,6 +9,10 @@ vi.mock('../../lib/students', () => ({
 }))
 
 describe('EnrollStudentForm', () => {
+  beforeEach(() => {
+    enrollStudent.mockClear()
+  })
+
   it('calls enrollStudent with the entered name and phone, shows the returned password, and calls onEnrolled', async () => {
     enrollStudent.mockResolvedValueOnce({ profileId: 'new-profile-1', password: 'Ab3xY9kLmP2q' })
     const onEnrolled = vi.fn()
@@ -28,9 +32,22 @@ describe('EnrollStudentForm', () => {
     const onEnrolled = vi.fn()
     render(<EnrollStudentForm onEnrolled={onEnrolled} />)
 
+    fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: 'Priya Sharma' } })
+    fireEvent.change(screen.getByLabelText(/phone/i), { target: { value: '9800000005' } })
     fireEvent.click(screen.getByRole('button', { name: /enroll/i }))
 
     await waitFor(() => expect(screen.getByText('A student with this phone number is already enrolled')).toBeInTheDocument())
+    expect(onEnrolled).not.toHaveBeenCalled()
+  })
+
+  it('shows a validation error and does not call enrollStudent when fields are left empty', async () => {
+    const onEnrolled = vi.fn()
+    render(<EnrollStudentForm onEnrolled={onEnrolled} />)
+
+    fireEvent.click(screen.getByRole('button', { name: /enroll/i }))
+
+    await waitFor(() => expect(screen.getByText('Full name and phone are required')).toBeInTheDocument())
+    expect(enrollStudent).not.toHaveBeenCalled()
     expect(onEnrolled).not.toHaveBeenCalled()
   })
 })
