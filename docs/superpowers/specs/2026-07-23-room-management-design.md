@@ -163,6 +163,13 @@ Written as a single migration, in this order:
 5. Backfill `room_type_id` by joining old `rooms.room_type` to the new
    `room_types.name`.
 6. `alter table rooms alter column room_type_id set not null`.
+6.5. **`drop view public.public_room_availability`** - added during
+   implementation review: `0018`'s view still depends on
+   `rooms.room_type`/`rooms.monthly_price` at this point, and Postgres
+   refuses to drop a column a view depends on. The view is recreated
+   later in section 6, once `room_type_id`/`room_types` exist for it to
+   read - dropping it here, before step 7, is what makes step 7 possible
+   at all.
 7. `alter table rooms drop column room_type`, `drop column capacity`,
    `drop column monthly_price`.
 8. Create the `rooms_with_status` view (3.4).
