@@ -36,7 +36,7 @@ export function RoomGrid({
         >
           <p className="font-display text-lg">{room.room_number}</p>
           <p className="text-xs uppercase tracking-wider">{room.display_status.replace('_', ' ')}</p>
-          {canManage && (
+          {canManage && onEditRoom && onDeleteRoom && (
             <div className="flex gap-2 text-xs">
               <button
                 type="button"

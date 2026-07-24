@@ -47,4 +47,10 @@ describe('RoomGrid', () => {
     expect(onEditRoom).toHaveBeenCalledWith(rooms[0])
     expect(onSelectRoom).not.toHaveBeenCalled()
   })
+
+  it('does not show Edit/Delete for owner when no callbacks are provided (read-only embedding)', () => {
+    render(<RoomGrid rooms={rooms} role="owner" selectedRoomId={null} onSelectRoom={vi.fn()} />)
+    expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /delete/i })).not.toBeInTheDocument()
+  })
 })
