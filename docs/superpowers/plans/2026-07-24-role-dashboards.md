@@ -771,7 +771,7 @@ describe('StudentDashboard', () => {
     render(<StudentDashboard />)
     await waitFor(() => expect(screen.getByText('14000')).toBeInTheDocument())
     expect(screen.getByText('100%')).toBeInTheDocument()
-    expect(screen.getByText('2026-08-01')).toBeInTheDocument()
+    expect(screen.getByText(/2026-08-01/)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /pay now/i })).not.toBeInTheDocument()
   })
 })
