@@ -453,7 +453,7 @@ const bookings = [
 ]
 
 const tickets = [
-  { id: 'ticket-1', student_id: 's-1', description: 'Broken fan', status: 'open', created_at: '2026-07-20T00:00:00Z', student_name: 'Anjali' },
+  { id: 'ticket-1', student_id: 's-2', description: 'Broken fan', status: 'open', created_at: '2026-07-20T00:00:00Z', student_name: 'Sita' },
 ]
 
 vi.mock('../../lib/rooms', async (importOriginal) => {
